@@ -33,6 +33,10 @@ export class CanvasText extends CanvasFullShape{
         return { width: metrics.width, height };
     }
 
+    public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        return this.GetSize(ctx);
+    }
+
     public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
         this.ApplyStyles_(ctx);
         
@@ -43,6 +47,8 @@ export class CanvasText extends CanvasFullShape{
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
+        ('save' in ctx) && ctx.save();
+
         this.ApplyStyles_(ctx);
         
         let position = this.GetUnscaledOffsetPosition_();
@@ -52,6 +58,8 @@ export class CanvasText extends CanvasFullShape{
         else if (this.state_.mode !== 'stroke' && 'fillText' in ctx){
             ctx.fillText(this.ComputeValue_(), position.x, position.y, (this.state_.size.width || undefined));
         }
+
+        ('restore' in ctx) && ctx.restore();
     }
 
     protected AttributeChanged_(name: string){

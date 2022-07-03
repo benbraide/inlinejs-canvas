@@ -31,6 +31,10 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         return (this.state_['size'] || { width: 0, height: 0 });
     }
 
+    public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        return (this.state_.size || this.GetParentSize_(ctx));
+    }
+
     public GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect{
         return { ...this.GetPosition(), ...this.GetSize(ctx) };
     }
@@ -79,5 +83,10 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
 
     protected GetUnscaledOffsetPosition_(): ICanvasPosition{
         return RemoveScale(this.GetOffsetPosition_(), this.GetTransformScale());
+    }
+
+    protected GetParentSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        let ancestor = FindAncestor(this, 'GetFixedSize');
+        return (ancestor ? (ancestor as any)['GetFixedSize'](ctx): { width: 0, height: 0 });
     }
 }

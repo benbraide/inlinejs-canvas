@@ -11,6 +11,7 @@ export declare class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> i
     Render(): void;
     Refresh(): void;
     GetSize(): ICanvasSize;
+    GetFixedSize(): ICanvasSize;
     GetNative(): HTMLCanvasElement | undefined;
     protected AttributeChanged_(name: string): void;
     private FindWithMouse_;

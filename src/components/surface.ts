@@ -95,7 +95,9 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
             this.rendered_ && this.ctx_.clearRect(0, 0, this.state_['size']['width'], this.state_['size']['height']);//Clear canvas
             this.rendered_ = true;
 
+            this.ctx_.save();
             Array.from(this.children).filter(child => (typeof child['Paint'] === 'function')).forEach(child => JournalTry(() => child['Paint'](this.ctx_), 'Canvas.Render'));
+            this.ctx_.restore();
         });
     }
 
@@ -109,6 +111,10 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
     }
 
     public GetSize(): ICanvasSize{
+        return this.state_.size;
+    }
+
+    public GetFixedSize(): ICanvasSize{
         return this.state_.size;
     }
 

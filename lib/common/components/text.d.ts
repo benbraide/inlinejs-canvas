@@ -4,6 +4,7 @@ export declare class CanvasText extends CanvasFullShape {
     private font_;
     constructor();
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
+    GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected AttributeChanged_(name: string): void;

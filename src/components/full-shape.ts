@@ -20,13 +20,17 @@ export class CanvasFullShape extends CanvasShape{
     }
 
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){
+        ('save' in ctx) && ctx.save();
+        
         if (this.state_.mode === 'stroke' && 'strokeStyle' in ctx){
             ctx.strokeStyle = (this.state_.color || 'black');
         }
-        else if ('fillStyle' in ctx){
+        else if (this.state_.mode !== 'stroke' && 'fillStyle' in ctx){
             ctx.fillStyle = (this.state_.color || 'black');
         }
         
         this.Render_(ctx);
+
+        ('restore' in ctx) && ctx.restore();
     }
 }

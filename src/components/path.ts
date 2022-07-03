@@ -10,6 +10,9 @@ export class CanvasPath extends CanvasParent{
             mode: <ICanvasPaintMode>'fill',
             color: '',
             close: true,
+            'line-width': 1,
+            'line-cap': <CanvasLineCap>'butt',
+            'line-join': <CanvasLineJoin>'miter',
             ...(state || {}),
         });
         this.addEventListener(CanvasRefreshEvent, () => (this.ctx_ = null));
@@ -25,8 +28,16 @@ export class CanvasPath extends CanvasParent{
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
+        ('save' in ctx) && ctx.save();
+
+        ('lineWidth' in ctx) && (ctx.lineWidth = this.state_['line-width']);
+        ('lineCap' in ctx) && (ctx.lineCap = this.state_['line-cap']);
+        ('lineJoin' in ctx) && (ctx.lineJoin = this.state_['line-join']);
+
         (!this.ctx_ || 'addPath' in ctx) && this.Fill_();//Fill if empty OR inside another path
         this.Project_(ctx);
+
+        ('restore' in ctx) && ctx.restore();
     }
 
     protected Fill_(){

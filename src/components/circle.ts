@@ -17,6 +17,10 @@ export class CanvasCircle extends CanvasPath{
             height: (this.state_.radius * 2),
         };
     }
+
+    public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        return this.GetSize(ctx);
+    }
     
     protected Fill_(){
         let position = this.GetUnscaledOffsetPosition_();
