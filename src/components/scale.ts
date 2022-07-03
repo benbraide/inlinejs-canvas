@@ -10,7 +10,7 @@ export class CanvasScale extends CanvasTransform{
     }
 
     public OffsetPosition(position: ICanvasPosition){
-        return this.OffsetPosition_(position);
+        return this.OffsetPosition_(position, this);
     }
 
     public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){

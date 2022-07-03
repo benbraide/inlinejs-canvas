@@ -1,4 +1,4 @@
-import { ICanvasPosition } from "../types";
+import { ICanvasFigure, ICanvasPosition } from "../types";
 import { ComputeDisplacement } from "../utilities/compute-displacement";
 import { RotatePoint } from "../utilities/rotate-point";
 import { CanvasParent } from "./parent";
@@ -20,7 +20,7 @@ export class CanvasTransform extends CanvasParent{
         return this.FindChildWithPoint_(position, ctx);
     }
 
-    public OffsetPosition(position: ICanvasPosition){
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null){
         return position;
     }
     

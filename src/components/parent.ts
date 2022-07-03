@@ -1,4 +1,4 @@
-import { ICanvasPosition, ICanvasRect, ICanvasSize } from "../types";
+import { ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasSize } from "../types";
 import { CanvasShape } from "./shape";
 
 export class CanvasParent extends CanvasShape{
@@ -21,15 +21,15 @@ export class CanvasParent extends CanvasShape{
         return null;
     }
 
-    public OffsetPosition(position: ICanvasPosition): ICanvasPosition{
-        return this.OffsetPosition_(position);
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition{
+        return this.OffsetPosition_(position, source);
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         this.GetShapeChildren().forEach(child => child.Paint(ctx));
     }
 
-    protected OffsetPosition_(position: ICanvasPosition): ICanvasPosition{
+    protected OffsetPosition_(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition{
         let myPosition = this.GetOffsetPosition_();
         return {
             x: (position.x + myPosition.x),

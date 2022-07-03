@@ -39,7 +39,7 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         return { ...this.GetPosition(), ...this.GetSize(ctx) };
     }
 
-    public OffsetPosition(position: ICanvasPosition){
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null){
         return position;
     }
 
@@ -78,7 +78,7 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
 
     protected GetOffsetPosition_(): ICanvasPosition{
         let ancestor = FindAncestor(this, 'OffsetPosition');
-        return (ancestor ? (ancestor as any)['OffsetPosition'](this.state_.position) : this.state_.position);
+        return (ancestor ? (ancestor as any)['OffsetPosition'](this.state_.position, this) : this.state_.position);
     }
 
     protected GetUnscaledOffsetPosition_(): ICanvasPosition{

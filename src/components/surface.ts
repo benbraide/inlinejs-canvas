@@ -143,7 +143,7 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
         (el !== this.withMouse_) && this.RemoveWithMouse_(false);
         (el !== this.withMouse_) && (this.withMouse_ = el)?.dispatchEvent(new CustomEvent('mouseenter', { bubbles: true }));
         if (el){//Move - notify with relative offset
-            let offset = (el as unknown as ICanvasFigure).OffsetPosition((el as unknown as ICanvasFigure).GetPosition());
+            let offset = (el as unknown as ICanvasFigure).OffsetPosition((el as unknown as ICanvasFigure).GetPosition(), null);
             el?.dispatchEvent(new CustomEvent('mousemove', {
                 bubbles: true,
                 detail: {
