@@ -14,6 +14,7 @@ export declare class CanvasShape extends CanvasAttributed implements ICanvasShap
     GetTransformScale(): ICanvasScaleValue;
     GetShapeChildren(): ICanvasShape[];
     Paint(ctx: CanvasRenderingContext2D | Path2D): void;
+    protected Cast_(name: string, value: any): any;
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Refresh_(): void;

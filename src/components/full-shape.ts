@@ -1,5 +1,4 @@
-import { ICanvasPaintMode, ICanvasPosition, ICanvasSize } from "../types";
-import { TestPoint } from "../utilities/test-point";
+import { ICanvasPaintMode } from "../types";
 import { CanvasShape } from "./shape"
 
 export class CanvasFullShape extends CanvasShape{
@@ -13,10 +12,6 @@ export class CanvasFullShape extends CanvasShape{
             color: '',
             ...(state || {}),
         });
-    }
-
-    public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        return TestPoint(point, this.GetOffsetPosition_(), this.state_.size, this.GetTransformScale());
     }
 
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){

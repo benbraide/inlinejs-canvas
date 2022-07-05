@@ -1,6 +1,7 @@
 import { CanvasRefreshEvent, ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasScaleValue, ICanvasShape, ICanvasSize } from "../types";
 import { FindAncestor } from "../utilities/find-ancestor";
 import { RemoveScale } from "../utilities/remove-scale";
+import { TestPoint } from "../utilities/test-point";
 import { CanvasAttributed } from "./attributed";
 
 export class CanvasShape extends CanvasAttributed implements ICanvasShape{
@@ -44,7 +45,7 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
     }
 
     public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        return false;
+        return TestPoint(point, this.GetOffsetPosition_(), (this.state_.size || { width: 0, height: 0 }), this.GetTransformScale());
     }
 
     public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
@@ -62,6 +63,10 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
 
     public Paint(ctx: CanvasRenderingContext2D | Path2D){
         !this.state_.hidden && this.Paint_(ctx);
+    }
+
+    protected Cast_(name: string, value: any){
+        return ((name === 'hidden') ? this.hasAttribute('hidden') : super.Cast_(name, value));
     }
 
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){

@@ -16,6 +16,7 @@ export class CanvasRoundRect extends CanvasPath{
         this.append(document.createElement('x-canvas-arc'));//Bottom-Right
         this.append(document.createElement('x-canvas-arc'));//Bottom-Left
 
+        this.state_.close = false;
         this.UpdateParts_(true);
     }
     

@@ -1,5 +1,5 @@
 import { GetGlobal } from "@benbraide/inlinejs";
-import { ICanvasSize } from "../types";
+import { ICanvasFigure, ICanvasPosition, ICanvasSize } from "../types";
 import { CanvasParent } from "./parent";
 
 export class CanvasBox extends CanvasParent{
@@ -11,6 +11,10 @@ export class CanvasBox extends CanvasParent{
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         return this.state_.size;
+    }
+
+    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
+        return (super.FindChildWithPoint(point, ctx) || (this.ContainsPoint(point, ctx) ? this : null));
     }
 
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){

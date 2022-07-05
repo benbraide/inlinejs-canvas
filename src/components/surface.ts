@@ -38,7 +38,9 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
 
         this.addEventListener(CanvasRefreshEvent, () => this.Refresh());
         this.shadow_ && this.shadowRoot?.append(this.shadow_);
+        
         this.ctx_ = (this.shadow_?.getContext('2d') || null);
+        this.ctx_ && (this.ctx_.imageSmoothingQuality = 'high');
 
         this.shadow_?.addEventListener('mouseleave', () => this.RemoveWithMouse_(true));
         this.shadow_?.addEventListener('mousemove', (e) => {

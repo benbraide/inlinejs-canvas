@@ -16,6 +16,9 @@ import { CanvasRotateCompact } from './components/rotate';
 import { CanvasScaleCompact } from './components/scale';
 import { CanvasAlignCompact } from './components/align';
 import { CanvasCenterCompact } from './components/center';
+import { CanvasSetCompact } from './components/set';
+import { CanvasCallCompact } from './components/call';
+import { CanvasInlineCompact } from './components/inline';
 import { WaitForGlobal } from '@benbraide/inlinejs';
 
 WaitForGlobal().then(() => {
@@ -37,4 +40,7 @@ WaitForGlobal().then(() => {
     CanvasScaleCompact();
     CanvasAlignCompact();
     CanvasCenterCompact();
+    CanvasSetCompact();
+    CanvasCallCompact();
+    CanvasInlineCompact();
 });

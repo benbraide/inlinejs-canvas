@@ -8,6 +8,7 @@ export class CanvasCircle extends CanvasPath{
             radius: 0,
         });
 
+        this.state_.close = false;
         this.Fill_();
     }
 

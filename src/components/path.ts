@@ -9,7 +9,7 @@ export class CanvasPath extends CanvasParent{
         super({
             mode: <ICanvasPaintMode>'fill',
             color: '',
-            close: true,
+            close: false,
             'line-width': 1,
             'line-cap': <CanvasLineCap>'butt',
             'line-join': <CanvasLineJoin>'miter',
@@ -30,10 +30,6 @@ export class CanvasPath extends CanvasParent{
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         ('save' in ctx) && ctx.save();
 
-        ('lineWidth' in ctx) && (ctx.lineWidth = this.state_['line-width']);
-        ('lineCap' in ctx) && (ctx.lineCap = this.state_['line-cap']);
-        ('lineJoin' in ctx) && (ctx.lineJoin = this.state_['line-join']);
-
         (!this.ctx_ || 'addPath' in ctx) && this.Fill_();//Fill if empty OR inside another path
         this.Project_(ctx);
 
@@ -51,6 +47,10 @@ export class CanvasPath extends CanvasParent{
     }
 
     protected Project_(ctx: CanvasRenderingContext2D | Path2D){
+        ('lineWidth' in ctx) && (ctx.lineWidth = this.state_['line-width']);
+        ('lineCap' in ctx) && (ctx.lineCap = this.state_['line-cap']);
+        ('lineJoin' in ctx) && (ctx.lineJoin = this.state_['line-join']);
+        
         if (this.ctx_ && this.state_.mode === 'stroke' && 'strokeStyle' in ctx){
             ctx.strokeStyle = (this.state_.color || 'black');
             ctx.stroke(this.ctx_);
