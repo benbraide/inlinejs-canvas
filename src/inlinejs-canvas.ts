@@ -11,6 +11,7 @@ import { CanvasLineCompact } from './components/line';
 import { CanvasArcCompact } from './components/arc';
 import { CanvasCircleCompact } from './components/circle';
 import { CanvasTextCompact } from './components/text';
+import { CanvasImageCompact } from './components/image';
 import { CanvasTranslateCompact } from './components/translate';
 import { CanvasRotateCompact } from './components/rotate';
 import { CanvasScaleCompact } from './components/scale';
@@ -35,6 +36,7 @@ WaitForGlobal().then(() => {
     CanvasArcCompact();
     CanvasCircleCompact();
     CanvasTextCompact();
+    CanvasImageCompact();
     CanvasTranslateCompact();
     CanvasRotateCompact();
     CanvasScaleCompact();

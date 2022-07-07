@@ -11,9 +11,11 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
 
     private rendered_ = false;
     private queued_ = false;
+    private requested_ = false;
     
     public constructor(){
         super({
+            vsync: true,
             manual: false,
             size: {
                 width: 0,
@@ -75,6 +77,7 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
         component.CreateElementScope(this)?.AddUninitCallback(() => FindComponentById(componentId)?.RemoveAttributeChangeCallback(this));
         component.AddAttributeChangeCallback(this, attributes => this.OnChange_(attributes));
 
+        (this.requested_ = this.state_.vsync) && requestAnimationFrame(() => this.VsyncCallback_());
         (!this.state_.manual) && this.Render();
     }
     
@@ -83,24 +86,7 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
     }
 
     public Render(){
-        if (this.queued_ || !this.shadow_){
-            return;
-        }
-
-        this.queued_ = true;
-        queueMicrotask(() => {
-            this.queued_ = false;
-            if (!this.ctx_){
-                return;
-            }
-            
-            this.rendered_ && this.ctx_.clearRect(0, 0, this.state_['size']['width'], this.state_['size']['height']);//Clear canvas
-            this.rendered_ = true;
-
-            this.ctx_.save();
-            Array.from(this.children).filter(child => (typeof child['Paint'] === 'function')).forEach(child => JournalTry(() => child['Paint'](this.ctx_), 'Canvas.Render'));
-            this.ctx_.restore();
-        });
+        !this.state_.vsync && !this.queued_ && (this.queued_ = true) && this.Render_();
     }
 
     public Refresh(){
@@ -126,8 +112,28 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
 
     protected AttributeChanged_(name: string){
         super.AttributeChanged_(name);
-        this.style.width = `${this.state_.size.width}px`;
-        this.style.height = `${this.state_.size.height}px`;
+
+        if (name === 'size' || name === 'width' || name === 'height'){
+            this.style.width = `${this.state_.size.width}px`;
+            this.style.height = `${this.state_.size.height}px`;
+        }
+        else if (name === 'vsync'){
+            !this.requested_ && (this.requested_ = this.state_.vsync) && requestAnimationFrame(() => this.VsyncCallback_());
+        }
+    }
+
+    private Render_(){
+        if (!this.queued_ || !this.shadow_ || !this.ctx_){
+            return;
+        }
+
+        this.queued_ = false;
+        this.rendered_ && this.ctx_.clearRect(0, 0, this.state_.size.width, this.state_.size.height);//Clear canvas
+        this.rendered_ = true;
+
+        this.ctx_.save();
+        Array.from(this.children).filter(child => (typeof child['Paint'] === 'function')).forEach(child => JournalTry(() => child['Paint'](this.ctx_), 'Canvas.Render'));
+        this.ctx_.restore();
     }
 
     private FindWithMouse_(){
@@ -159,6 +165,12 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
         this.withMouse_ && this.withMouse_.dispatchEvent(new CustomEvent('mouseleave'));
         this.withMouse_ = null;
         resetOffset && (this.mouseOffset_ = null);
+    }
+
+    private VsyncCallback_(){
+        this.rendered_ && this.Render();
+        (this.requested_ = this.state_.vsync) && requestAnimationFrame(() => this.VsyncCallback_());
+        !this.queued_ && (this.queued_ = true) && this.Render_();
     }
 }
 

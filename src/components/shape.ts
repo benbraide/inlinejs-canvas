@@ -40,7 +40,7 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         return { ...this.GetPosition(), ...this.GetSize(ctx) };
     }
 
-    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null){
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
         return position;
     }
 
@@ -81,13 +81,13 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         }));
     }
 
-    protected GetOffsetPosition_(): ICanvasPosition{
+    protected GetOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition{
         let ancestor = FindAncestor(this, 'OffsetPosition');
-        return (ancestor ? (ancestor as any)['OffsetPosition'](this.state_.position, this) : this.state_.position);
+        return (ancestor ? (ancestor as any)['OffsetPosition'](this.state_.position, this, ctx) : this.state_.position);
     }
 
-    protected GetUnscaledOffsetPosition_(): ICanvasPosition{
-        return RemoveScale(this.GetOffsetPosition_(), this.GetTransformScale());
+    protected GetUnscaledOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition{
+        return RemoveScale(this.GetOffsetPosition_(ctx), this.GetTransformScale());
     }
 
     protected GetParentSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize{

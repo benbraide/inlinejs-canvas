@@ -11,8 +11,8 @@ export class CanvasAlign extends CanvasParent{
         });
     }
 
-    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition{
-        let myPosition = this.GetOffsetPosition_(), parentSize = this.GetParentSize_(null), childSize = ((source && !this.state_.group) ? source.GetSize(null) : this.GetChildSize_(null));
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition{
+        let myPosition = this.GetOffsetPosition_(ctx), parentSize = this.GetParentSize_(null), childSize = ((source && !this.state_.group) ? source.GetSize(ctx || null) : this.GetChildSize_(ctx || null));
         let alignment: ICanvasPosition = {
             x: Align(this.state_.value.horizontal, childSize.width, parentSize.width),
             y: Align(this.state_.value.vertical, childSize.height, parentSize.height),

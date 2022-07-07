@@ -1,5 +1,5 @@
 import { GetGlobal } from "@benbraide/inlinejs";
-import { ICanvasPosition, ICanvasScaleValue } from "../types";
+import { ICanvasFigure, ICanvasPosition, ICanvasScaleValue } from "../types";
 import { CanvasTransform } from "./transform";
 
 export class CanvasScale extends CanvasTransform{
@@ -9,8 +9,8 @@ export class CanvasScale extends CanvasTransform{
         });
     }
 
-    public OffsetPosition(position: ICanvasPosition){
-        return this.OffsetPosition_(position, this);
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
+        return this.OffsetPosition_(position, this, ctx);
     }
 
     public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){

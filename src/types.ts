@@ -49,7 +49,7 @@ export interface ICanvasFigure extends ICanvasComponent{
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
-    OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition;
+    OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
     FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
     GetTransformScale(): ICanvasScaleValue;

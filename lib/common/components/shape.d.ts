@@ -8,7 +8,7 @@ export declare class CanvasShape extends CanvasAttributed implements ICanvasShap
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
-    OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition;
+    OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
     FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
     GetTransformScale(): ICanvasScaleValue;
@@ -18,7 +18,7 @@ export declare class CanvasShape extends CanvasAttributed implements ICanvasShap
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Refresh_(): void;
-    protected GetOffsetPosition_(): ICanvasPosition;
-    protected GetUnscaledOffsetPosition_(): ICanvasPosition;
+    protected GetOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition;
+    protected GetUnscaledOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition;
     protected GetParentSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize;
 }

@@ -51,7 +51,7 @@ export class CanvasText extends CanvasFullShape{
 
         this.ApplyStyles_(ctx);
         
-        let position = this.GetUnscaledOffsetPosition_();
+        let position = this.GetUnscaledOffsetPosition_(('stroke' in ctx) ? ctx : undefined);
         if (this.state_.mode === 'stroke' && 'strokeText' in ctx){
             ctx.strokeText(this.ComputeValue_(), position.x, position.y, (this.state_.size.width || undefined));
         }

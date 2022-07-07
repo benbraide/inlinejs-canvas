@@ -21,16 +21,16 @@ export class CanvasParent extends CanvasShape{
         return null;
     }
 
-    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition{
-        return this.OffsetPosition_(position, source);
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition{
+        return this.OffsetPosition_(position, source, ctx);
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         this.GetShapeChildren().forEach(child => child.Paint(ctx));
     }
 
-    protected OffsetPosition_(position: ICanvasPosition, source: ICanvasFigure | null): ICanvasPosition{
-        let myPosition = this.GetOffsetPosition_();
+    protected OffsetPosition_(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition{
+        let myPosition = this.GetOffsetPosition_(ctx);
         return {
             x: (position.x + myPosition.x),
             y: (position.y + myPosition.y),

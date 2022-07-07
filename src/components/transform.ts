@@ -11,16 +11,16 @@ export class CanvasTransform extends CanvasParent{
     public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
         let position: ICanvasPosition;
         if ('angle' in this.state_){
-            position = ComputeDisplacement(RotatePoint(this.GetOffsetPosition_(), this.state_.angle), RotatePoint(point, this.state_.angle));
+            position = ComputeDisplacement(RotatePoint(this.GetOffsetPosition_(ctx), this.state_.angle), RotatePoint(point, this.state_.angle));
         }
         else{
-            position = ComputeDisplacement(this.GetOffsetPosition_(), point);
+            position = ComputeDisplacement(this.GetOffsetPosition_(ctx), point);
         }
         
         return this.FindChildWithPoint_(position, ctx);
     }
 
-    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null){
+    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
         return position;
     }
     
