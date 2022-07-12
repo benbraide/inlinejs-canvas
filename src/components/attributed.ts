@@ -58,6 +58,6 @@ export class CanvasAttributed<ShadowType = Element> extends HTMLElement{
     protected Refresh_(){}
 
     protected Cast_(name: string, value: any){
-        return value;
+        return ((this.state_.hasOwnProperty(name) && typeof this.state_[name] === 'boolean') ? this.hasAttribute(name) : value);
     }
 }

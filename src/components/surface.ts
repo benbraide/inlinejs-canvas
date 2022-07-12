@@ -98,6 +98,18 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
         }
     }
 
+    public GetContext(){
+        return this.ctx_;
+    }
+
+    public GetSurfaceContext(){
+        return this.ctx_;
+    }
+
+    public GetSurfaceSize(){
+        return this.state_.size;
+    }
+    
     public GetSize(): ICanvasSize{
         return this.state_.size;
     }

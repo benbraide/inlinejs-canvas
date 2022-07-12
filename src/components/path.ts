@@ -26,11 +26,15 @@ export class CanvasPath extends CanvasParent{
     public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
         return (this.ContainsPoint(point, ctx) ? this : null);
     }
+
+    public GetContext(): CanvasRenderingContext2D | Path2D | null{
+        return this.ctx_;
+    }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         ('save' in ctx) && ctx.save();
 
-        (!this.ctx_ || 'addPath' in ctx) && this.Fill_();//Fill if empty OR inside another path
+        this.Fill_();
         this.Project_(ctx);
 
         ('restore' in ctx) && ctx.restore();

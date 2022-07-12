@@ -3,8 +3,11 @@ import { ICanvasPosition, ICanvasSize } from "../types";
 import { TestPoint } from "../utilities/test-point";
 import { CanvasFullShape } from "./full-shape";
 
+const fontKeys = ['font-family', 'font-size', 'font-style', 'font-weight', 'line-height'];
+
 export class CanvasText extends CanvasFullShape{
     private font_ = '';
+    private size_: ICanvasSize | null = null;
     
     public constructor(){
         super({
@@ -17,20 +20,27 @@ export class CanvasText extends CanvasFullShape{
             baseline: <CanvasTextBaseline>'top',
             direction: <CanvasDirection>'inherit',
             value: '',
+            cache: true,
         });
 
         this.font_ = this.ComputeFont_();
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        if (this.size_){
+            return this.size_;
+        }
+        
         if (!ctx){
             return { width: 0, height: 0 };
         }
         
+        this.ApplyStyles_(ctx);
+        
         let metrics = ctx.measureText(this.ComputeValue_());
         let height = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
         
-        return { width: metrics.width, height };
+        return (this.state_.cache ? (this.size_ = { width: metrics.width, height }) : ({ width: metrics.width, height }));
     }
 
     public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
@@ -38,12 +48,7 @@ export class CanvasText extends CanvasFullShape{
     }
 
     public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        this.ApplyStyles_(ctx);
-        
-        let position = this.GetOffsetPosition_(), metrics = ctx.measureText(this.ComputeValue_());
-        let height = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-        
-        return TestPoint(point, position, { width: metrics.width, height }, this.GetTransformScale());
+        return TestPoint(point, this.GetOffsetPosition_(ctx), this.GetSize(ctx), this.GetTransformScale());
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
@@ -64,7 +69,8 @@ export class CanvasText extends CanvasFullShape{
 
     protected AttributeChanged_(name: string){
         super.AttributeChanged_(name);
-        ['font-family', 'font-size', 'font-style', 'font-weight', 'line-height'].includes(name) && (this.font_ = this.ComputeFont_());
+        fontKeys.includes(name) && (this.font_ = this.ComputeFont_());
+        (name === 'value' || name === 'cache') && (this.size_ = null);
     }
 
     private ApplyStyles_(ctx: CanvasRenderingContext2D | Path2D){
@@ -82,6 +88,8 @@ export class CanvasText extends CanvasFullShape{
 
         (this.state_['font-style'] !== 'normal') && parts.push(this.state_['font-style']);
         (this.state_['font-weight'] !== 'normal') && parts.push(this.state_['font-weight']);
+
+        this.size_ = null;
         
         return parts.join(' ');
     }
@@ -92,5 +100,6 @@ export class CanvasText extends CanvasFullShape{
 }
 
 export function CanvasTextCompact(){
+    GetGlobal().GetConfig().AddBooleanAttribute('cache');
     customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-text'), CanvasText);
 }

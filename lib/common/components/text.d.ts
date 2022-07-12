@@ -2,6 +2,7 @@ import { ICanvasPosition, ICanvasSize } from "../types";
 import { CanvasFullShape } from "./full-shape";
 export declare class CanvasText extends CanvasFullShape {
     private font_;
+    private size_;
     constructor();
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;

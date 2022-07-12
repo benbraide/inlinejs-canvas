@@ -5,6 +5,10 @@ export declare class CanvasShape extends CanvasAttributed implements ICanvasShap
     GetComponentChildren(): ICanvasComponent[];
     GetFigureChildren(): ICanvasFigure[];
     GetPosition(): ICanvasPosition;
+    GetOffsetPosition(ctx?: CanvasRenderingContext2D): ICanvasPosition;
+    GetContext(): CanvasRenderingContext2D | Path2D | null;
+    GetSurfaceContext(): CanvasRenderingContext2D | null;
+    GetSurfaceSize(): ICanvasSize;
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
@@ -14,7 +18,6 @@ export declare class CanvasShape extends CanvasAttributed implements ICanvasShap
     GetTransformScale(): ICanvasScaleValue;
     GetShapeChildren(): ICanvasShape[];
     Paint(ctx: CanvasRenderingContext2D | Path2D): void;
-    protected Cast_(name: string, value: any): any;
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Refresh_(): void;

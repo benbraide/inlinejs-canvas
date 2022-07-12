@@ -1,4 +1,6 @@
 export declare const CanvasRefreshEvent = "canvas.refresh";
+export declare const CanvasCollisionEvent = "canvas.collision";
+export declare const CanvasCollisionCheckEvent = "canvas.collision.check";
 export interface ICanvasPosition {
     x: number;
     y: number;
@@ -35,6 +37,10 @@ export interface ICanvasComponent {
 export interface ICanvasFigure extends ICanvasComponent {
     GetFigureChildren(): Array<ICanvasFigure>;
     GetPosition(): ICanvasPosition;
+    GetOffsetPosition(ctx?: CanvasRenderingContext2D): ICanvasPosition;
+    GetContext(): CanvasRenderingContext2D | Path2D | null;
+    GetSurfaceContext(): CanvasRenderingContext2D | null;
+    GetSurfaceSize(): ICanvasSize;
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
@@ -47,3 +53,6 @@ export interface ICanvasShape extends ICanvasFigure {
     GetShapeChildren(): Array<ICanvasShape>;
     Paint(ctx: CanvasRenderingContext2D | Path2D): void;
 }
+export declare type CanvasBodyDirection = '' | 'n' | 'nw' | 'w' | 'sw' | 's' | 'se' | 'e' | 'ne';
+export declare type CanvasBodyOrientation = 'horizontal' | 'vertical' | 'none';
+export declare type CanvasBodyCollisionSide = 'top' | 'right' | 'bottom' | 'left' | 'edge';

@@ -17,6 +17,7 @@ import { CanvasRotateCompact } from './components/rotate';
 import { CanvasScaleCompact } from './components/scale';
 import { CanvasAlignCompact } from './components/align';
 import { CanvasCenterCompact } from './components/center';
+import { CanvasBodyCompact } from './components/body';
 import { CanvasSetCompact } from './components/set';
 import { CanvasCallCompact } from './components/call';
 import { CanvasInlineCompact } from './components/inline';
@@ -42,6 +43,7 @@ WaitForGlobal().then(() => {
     CanvasScaleCompact();
     CanvasAlignCompact();
     CanvasCenterCompact();
+    CanvasBodyCompact();
     CanvasSetCompact();
     CanvasCallCompact();
     CanvasInlineCompact();

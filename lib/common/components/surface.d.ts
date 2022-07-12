@@ -11,6 +11,9 @@ export declare class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> i
     GetComponentChildren(): ICanvasComponent[];
     Render(): void;
     Refresh(): void;
+    GetContext(): CanvasRenderingContext2D | null;
+    GetSurfaceContext(): CanvasRenderingContext2D | null;
+    GetSurfaceSize(): any;
     GetSize(): ICanvasSize;
     GetFixedSize(): ICanvasSize;
     GetNative(): HTMLCanvasElement | undefined;

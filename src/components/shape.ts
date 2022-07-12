@@ -28,8 +28,27 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         return this.state_['position'];
     }
 
+    public GetOffsetPosition(ctx?: CanvasRenderingContext2D): ICanvasPosition{
+        return this.GetOffsetPosition_(ctx);
+    }
+
+    public GetContext(): CanvasRenderingContext2D | Path2D | null{
+        let ancestor = FindAncestor(this, 'GetContext');
+        return (ancestor ? (ancestor as any)['GetContext']() : null);
+    }
+
+    public GetSurfaceContext(): CanvasRenderingContext2D | null{
+        let ancestor = FindAncestor(this, 'GetSurfaceContext');
+        return (ancestor ? (ancestor as any)['GetSurfaceContext']() : null);
+    }
+
+    public GetSurfaceSize(): ICanvasSize{
+        let ancestor = FindAncestor(this, 'GetSurfaceSize');
+        return (ancestor ? (ancestor as any)['GetSurfaceSize']() : { width: 0, height: 0 });
+    }
+
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        return (this.state_['size'] || { width: 0, height: 0 });
+        return (this.state_.size || { width: 0, height: 0 });
     }
 
     public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
@@ -65,10 +84,6 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
         !this.state_.hidden && this.Paint_(ctx);
     }
 
-    protected Cast_(name: string, value: any){
-        return ((name === 'hidden') ? this.hasAttribute('hidden') : super.Cast_(name, value));
-    }
-
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){
         this.Render_(ctx);
     }
@@ -92,6 +107,6 @@ export class CanvasShape extends CanvasAttributed implements ICanvasShape{
 
     protected GetParentSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         let ancestor = FindAncestor(this, 'GetFixedSize');
-        return (ancestor ? (ancestor as any)['GetFixedSize'](ctx): { width: 0, height: 0 });
+        return (ancestor ? (ancestor as any)['GetFixedSize'](ctx) : { width: 0, height: 0 });
     }
 }
