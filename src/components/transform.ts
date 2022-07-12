@@ -46,8 +46,8 @@ export class CanvasTransform extends CanvasParent{
         return null;
     }
 
-    protected Translate_(ctx: CanvasRenderingContext2D | Path2D){
-        let position = this.GetUnscaledOffsetPosition_();
+    protected Translate_(ctx: CanvasRenderingContext2D | Path2D, position?: ICanvasPosition){
+        position = (position || this.GetUnscaledOffsetPosition_());
         ('translate' in ctx) && ctx.translate(position.x, position.y);
     }
 }

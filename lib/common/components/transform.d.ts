@@ -7,5 +7,5 @@ export declare class CanvasTransform extends CanvasParent {
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Apply_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected FindChildWithPoint_(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
-    protected Translate_(ctx: CanvasRenderingContext2D | Path2D): void;
+    protected Translate_(ctx: CanvasRenderingContext2D | Path2D, position?: ICanvasPosition): void;
 }
