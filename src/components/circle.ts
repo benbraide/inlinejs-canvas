@@ -32,5 +32,5 @@ export class CanvasCircle extends CanvasPath{
 }
 
 export function CanvasCircleCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-circle'), CanvasCircle);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-circle'), CanvasCircle);
 }

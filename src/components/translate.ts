@@ -8,5 +8,5 @@ export class CanvasTranslate extends CanvasTransform{
 }
 
 export function CanvasTranslateCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-translate'), CanvasTranslate);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-translate'), CanvasTranslate);
 }

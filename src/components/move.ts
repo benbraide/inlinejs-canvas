@@ -9,5 +9,5 @@ export class CanvasMove extends CanvasShape{
 }
 
 export function CanvasMoveCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-move'), CanvasMove);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-move'), CanvasMove);
 }

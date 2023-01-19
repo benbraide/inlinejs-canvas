@@ -10,5 +10,5 @@ export class CanvasGroup extends CanvasParent{
 }
 
 export function CanvasGroupCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-group'), CanvasGroup);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-group'), CanvasGroup);
 }

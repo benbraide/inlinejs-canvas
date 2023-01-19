@@ -47,5 +47,5 @@ export class CanvasRoundRect extends CanvasPath{
 }
 
 export function CanvasRoundRectCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-round-rect'), CanvasRoundRect);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-round-rect'), CanvasRoundRect);
 }

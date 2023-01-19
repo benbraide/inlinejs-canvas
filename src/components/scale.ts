@@ -27,5 +27,5 @@ export class CanvasScale extends CanvasTransform{
 }
 
 export function CanvasScaleCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-scale'), CanvasScale);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-scale'), CanvasScale);
 }

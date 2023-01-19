@@ -242,5 +242,5 @@ export class CanvasBody extends CanvasParent{
 }
 
 export function CanvasBodyCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-body'), CanvasBody);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-body'), CanvasBody);
 }

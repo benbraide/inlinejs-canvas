@@ -13,5 +13,5 @@ export class CanvasCall extends CanvasParent{
 }
 
 export function CanvasCallCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-call'), CanvasCall);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-call'), CanvasCall);
 }

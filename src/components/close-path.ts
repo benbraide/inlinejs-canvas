@@ -8,5 +8,5 @@ export class CanvasClosePath extends CanvasShape{
 }
 
 export function CanvasClosePathCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-close-path'), CanvasClosePath);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-close-path'), CanvasClosePath);
 }

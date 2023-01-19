@@ -1,5 +1,5 @@
 import { GetGlobal } from "@benbraide/inlinejs";
-import { SetValue } from "../utilities/set-value";
+import { SetValue } from "@benbraide/inlinejs-element";
 import { CanvasParent } from "./parent";
 
 export class CanvasSet extends CanvasParent{
@@ -14,5 +14,5 @@ export class CanvasSet extends CanvasParent{
 }
 
 export function CanvasSetCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-set'), CanvasSet);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-set'), CanvasSet);
 }

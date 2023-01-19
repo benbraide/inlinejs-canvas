@@ -43,5 +43,5 @@ export class CanvasInline extends CanvasParent{
 
 export function CanvasInlineCompact(){
     GetGlobal().GetConfig().AddBooleanAttribute('effect');
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-inline'), CanvasInline);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-inline'), CanvasInline);
 }

@@ -9,5 +9,5 @@ export class CanvasLine extends CanvasShape{
 }
 
 export function CanvasLineCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-line'), CanvasLine);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-line'), CanvasLine);
 }

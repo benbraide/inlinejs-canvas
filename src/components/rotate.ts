@@ -44,5 +44,5 @@ export class CanvasRotate extends CanvasTransform{
 }
 
 export function CanvasRotateCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-rotate'), CanvasRotate);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-rotate'), CanvasRotate);
 }

@@ -62,5 +62,5 @@ export class CanvasImage extends CanvasFullShape{
 }
 
 export function CanvasImageCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-image'), CanvasImage);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-image'), CanvasImage);
 }

@@ -26,5 +26,5 @@ export class CanvasAlign extends CanvasParent{
 }
 
 export function CanvasAlignCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-align'), CanvasAlign);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-align'), CanvasAlign);
 }

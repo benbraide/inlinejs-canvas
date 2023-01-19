@@ -101,5 +101,5 @@ export class CanvasText extends CanvasFullShape{
 
 export function CanvasTextCompact(){
     GetGlobal().GetConfig().AddBooleanAttribute('cache');
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-text'), CanvasText);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-text'), CanvasText);
 }

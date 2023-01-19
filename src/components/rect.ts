@@ -17,5 +17,5 @@ export class CanvasRect extends CanvasFullShape{
 }
 
 export function CanvasRectCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-rect'), CanvasRect);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-rect'), CanvasRect);
 }

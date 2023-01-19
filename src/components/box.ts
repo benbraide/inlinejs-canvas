@@ -25,5 +25,5 @@ export class CanvasBox extends CanvasParent{
 }
 
 export function CanvasBoxCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-box'), CanvasBox);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-box'), CanvasBox);
 }

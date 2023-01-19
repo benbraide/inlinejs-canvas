@@ -1,9 +1,8 @@
-import { FindComponentById, GetGlobal, JournalTry, ToString } from "@benbraide/inlinejs";
+import { GetGlobal, JournalTry, ToString } from "@benbraide/inlinejs";
+import { CustomElement, SetValue } from '@benbraide/inlinejs-element';
 import { CanvasRefreshEvent, ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasSize } from "../types";
-import { SetValue } from "../utilities/set-value";
-import { CanvasAttributed } from "./attributed";
 
-export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implements ICanvasComponent{
+export class CanvasSurface extends CustomElement<HTMLCanvasElement> implements ICanvasComponent{
     private ctx_: CanvasRenderingContext2D | null;
     
     private withMouse_: Element | null = null;
@@ -21,7 +20,7 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
                 width: 0,
                 height: 0,
             },
-        }, document.createElement('canvas'));
+        }, true, document.createElement('canvas'));
 
         this.attachShadow({
             mode: 'open',
@@ -71,11 +70,6 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
                 farthestAncestor = ancestor;
             }
         }
-
-        let component = GetGlobal().CreateComponent((farthestAncestor as HTMLElement) || this), componentId = component.GetId();
-
-        component.CreateElementScope(this)?.AddUninitCallback(() => FindComponentById(componentId)?.RemoveAttributeChangeCallback(this));
-        component.AddAttributeChangeCallback(this, attributes => this.OnChange_(attributes));
 
         (this.requested_ = this.state_.vsync) && requestAnimationFrame(() => this.VsyncCallback_());
         (!this.state_.manual) && this.Render();
@@ -187,5 +181,5 @@ export class CanvasSurface extends CanvasAttributed<HTMLCanvasElement> implement
 }
 
 export function CanvasSurfaceCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas'), CanvasSurface);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas'), CanvasSurface);
 }

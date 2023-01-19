@@ -19,5 +19,5 @@ export class CanvasArc extends CanvasShape{
 }
 
 export function CanvasArcCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-arc'), CanvasArc);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-arc'), CanvasArc);
 }

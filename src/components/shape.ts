@@ -1,10 +1,10 @@
+import { CustomElement } from "@benbraide/inlinejs-element";
 import { CanvasRefreshEvent, ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasScaleValue, ICanvasShape, ICanvasSize } from "../types";
-import { FindAncestor } from "../utilities/find-ancestor";
+import { FindAncestor } from "@benbraide/inlinejs-element";
 import { RemoveScale } from "../utilities/remove-scale";
 import { TestPoint } from "../utilities/test-point";
-import { CanvasAttributed } from "./attributed";
 
-export class CanvasShape extends CanvasAttributed implements ICanvasShape{
+export class CanvasShape extends CustomElement implements ICanvasShape{
     public constructor(state?: Record<string, any>){
         super({
             position: {

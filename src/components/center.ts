@@ -9,5 +9,5 @@ export class CanvasCenter extends CanvasAlign{
 }
 
 export function CanvasCenterCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-center'), CanvasCenter);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-center'), CanvasCenter);
 }

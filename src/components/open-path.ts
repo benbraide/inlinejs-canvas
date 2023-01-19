@@ -49,5 +49,5 @@ export class CanvasOpenPath extends CanvasParent{
 }
 
 export function CanvasOpenPathCompact(){
-    customElements.define(GetGlobal().GetConfig().GetDirectiveName('canvas-open-path'), CanvasOpenPath);
+    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-open-path'), CanvasOpenPath);
 }
