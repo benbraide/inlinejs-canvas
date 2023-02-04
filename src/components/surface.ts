@@ -20,7 +20,7 @@ export class CanvasSurface extends CustomElement<HTMLCanvasElement> implements I
                 width: 0,
                 height: 0,
             },
-        }, true, document.createElement('canvas'));
+        }, document.createElement('canvas'));
 
         this.attachShadow({
             mode: 'open',
