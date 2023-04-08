@@ -24,6 +24,7 @@ export class CanvasText extends CanvasFullShape{
         });
 
         this.font_ = this.ComputeFont_();
+        this.wrapper_.AddBooleanAttribute('cache');
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
@@ -100,6 +101,5 @@ export class CanvasText extends CanvasFullShape{
 }
 
 export function CanvasTextCompact(){
-    GetGlobal().GetConfig().AddBooleanAttribute('cache');
     customElements.define(GetGlobal().GetConfig().GetElementName('canvas-text'), CanvasText);
 }

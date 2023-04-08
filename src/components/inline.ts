@@ -7,6 +7,8 @@ export class CanvasInline extends CanvasParent{
             value: '',
             effect: false,
         });
+
+        this.wrapper_.AddBooleanAttribute('effect');
     }
 
     protected Cast_(name: string, value: any){
@@ -42,6 +44,5 @@ export class CanvasInline extends CanvasParent{
 }
 
 export function CanvasInlineCompact(){
-    GetGlobal().GetConfig().AddBooleanAttribute('effect');
     customElements.define(GetGlobal().GetConfig().GetElementName('canvas-inline'), CanvasInline);
 }
