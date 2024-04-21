@@ -1,31 +1,36 @@
-import { GetGlobal } from "@benbraide/inlinejs";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasFigure, ICanvasPosition, ICanvasScaleValue } from "../types";
-import { CanvasTransform } from "./transform";
+import { CanvasTransformElement } from "./transform";
+import { CallContextMethod } from "../utilities/context";
 
-export class CanvasScale extends CanvasTransform{
+export class CanvasScaleElement extends CanvasTransformElement{
+    @Property({ type: 'number', spread: 'factor' })
+    public horizontal = 1;
+
+    @Property({ type: 'number', spread: 'factor' })
+    public vertical = 1;
+    
     public constructor(){
-        super({
-            value: { horizontal: 1, vertical: 1 },
-        });
+        super();
     }
 
     public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
         return this.OffsetPosition_(position, this, ctx);
     }
 
-    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        return this.FindChildWithPoint_(point, ctx);
+    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
+        return this.FindFigureWithPoint_(point, ctx);
     }
 
     public GetTransformScale(): ICanvasScaleValue{
-        return this.state_.value;
+        return { horizontal: this.horizontal, vertical: this.vertical };
     }
 
     protected Apply_(ctx: CanvasRenderingContext2D | Path2D){
-        ('scale' in ctx) && ctx.scale(this.state_.value.horizontal, this.state_.value.vertical);
+        CallContextMethod(ctx, 'scale', this.horizontal, this.vertical);
     }
 }
 
 export function CanvasScaleCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-scale'), CanvasScale);
+    RegisterCustomElement(CanvasScaleElement, 'canvas-scale');
 }

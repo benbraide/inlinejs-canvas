@@ -1,13 +1,17 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasShape } from "./shape";
+import { RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasShapeElement } from "./shape";
 
-export class CanvasMove extends CanvasShape{
+export class CanvasMoveElement extends CanvasShapeElement{
+    public constructor(){
+        super();
+    }
+    
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        let position = this.GetUnscaledOffsetPosition_();
+        const position = this.GetUnscaledOffsetPosition_();
         ctx.moveTo(position.x, position.y);
     }
 }
 
 export function CanvasMoveCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-move'), CanvasMove);
+    RegisterCustomElement(CanvasMoveElement, 'canvas-move');
 }

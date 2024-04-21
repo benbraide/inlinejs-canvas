@@ -1,20 +1,31 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasRefreshEvent, ICanvasFigure, ICanvasPaintMode, ICanvasPosition } from "../types";
-import { CanvasParent } from "./parent";
+import { CanvasRefreshEvent, ICanvasFigure, CanvasPaintModeType, ICanvasPosition } from "../types";
+import { CanvasParentElement } from "./parent";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { AssignContextValue, CallContextMethod, FillOrStrokeContext, TryGuardContext } from "../utilities/context";
 
-export class CanvasPath extends CanvasParent{
+export class CanvasPathElement extends CanvasParentElement{
     protected ctx_: Path2D | null = null;
 
-    public constructor(state?: Record<string, any>){
-        super({
-            mode: <ICanvasPaintMode>'fill',
-            color: '',
-            close: false,
-            'line-width': 1,
-            'line-cap': <CanvasLineCap>'butt',
-            'line-join': <CanvasLineJoin>'miter',
-            ...(state || {}),
-        });
+    @Property({ type: 'string' })
+    public mode: CanvasPaintModeType = 'fill';
+
+    @Property({ type: 'string' })
+    public color = '';
+
+    @Property({ type: 'boolean' })
+    public close = false;
+
+    @Property({ type: 'number', spread: 'line' })
+    public lineWidth = 1;
+
+    @Property({ type: 'string', spread: 'line' })
+    public lineCap: CanvasLineCap = 'butt';
+
+    @Property({ type: 'string', spread: 'line' })
+    public lineJoin: CanvasLineJoin = 'miter';
+
+    public constructor(){
+        super();
         this.addEventListener(CanvasRefreshEvent, () => (this.ctx_ = null));
     }
 
@@ -23,7 +34,7 @@ export class CanvasPath extends CanvasParent{
         return !!(this.ctx_ && ctx.isPointInPath(this.ctx_, point.x, point.y));
     }
 
-    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
+    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
         return (this.ContainsPoint(point, ctx) ? this : null);
     }
 
@@ -32,12 +43,10 @@ export class CanvasPath extends CanvasParent{
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        ('save' in ctx) && ctx.save();
-
-        this.Fill_();
-        this.Project_(ctx);
-
-        ('restore' in ctx) && ctx.restore();
+        TryGuardContext(ctx, (ctx) => {
+            this.Fill_();
+            this.Project_(ctx);
+        });
     }
 
     protected Fill_(){
@@ -46,29 +55,21 @@ export class CanvasPath extends CanvasParent{
         this.ctx_ = new Path2D;
         this.ctx_.moveTo(position.x, position.y);
 
+        this.Draw_();
         super.Render_(this.ctx_);
-        this.state_.close && this.ctx_.closePath();
+        this.close && this.ctx_.closePath();
     }
 
+    protected Draw_(){}
+
     protected Project_(ctx: CanvasRenderingContext2D | Path2D){
-        ('lineWidth' in ctx) && (ctx.lineWidth = this.state_['line-width']);
-        ('lineCap' in ctx) && (ctx.lineCap = this.state_['line-cap']);
-        ('lineJoin' in ctx) && (ctx.lineJoin = this.state_['line-join']);
-        
-        if (this.ctx_ && this.state_.mode === 'stroke' && 'strokeStyle' in ctx){
-            ctx.strokeStyle = (this.state_.color || 'black');
-            ctx.stroke(this.ctx_);
-        }
-        else if (this.ctx_ && this.state_.mode !== 'stroke' && 'fillStyle' in ctx){
-            ctx.fillStyle = (this.state_.color || 'black');
-            ctx.fill(this.ctx_);
-        }
-        else if (this.ctx_ && 'addPath' in ctx){
-            ctx.addPath(this.ctx_);
+        if (this.ctx_){
+            ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
+            !FillOrStrokeContext(ctx, this.mode, this.color, this.ctx_) && CallContextMethod(ctx, 'addPath', this.ctx_);
         }
     }
 }
 
 export function CanvasPathCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-path'), CanvasPath);
+    RegisterCustomElement(CanvasPathElement, 'canvas-path');
 }

@@ -1,31 +1,44 @@
-import { CustomElement } from "@benbraide/inlinejs-element";
-import { CanvasRefreshEvent, ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasScaleValue, ICanvasShape, ICanvasSize } from "../types";
-import { FindAncestor } from "@benbraide/inlinejs-element";
+import { CustomElement, Property } from "@benbraide/inlinejs-element";
+import { ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasScaleValue, ICanvasShape, ICanvasSize } from "../types";
 import { RemoveScale } from "../utilities/remove-scale";
 import { TestPoint } from "../utilities/test-point";
+import { FilterByFunction } from "../utilities/filter";
+import { FindAncestorByFunction } from "../utilities/ancestor";
 
-export class CanvasShape extends CustomElement implements ICanvasShape{
-    public constructor(state?: Record<string, any>){
+export class CanvasShapeElement extends CustomElement implements ICanvasShape{
+    protected hidden_ = false;
+    
+    @Property({ type: 'boolean' })
+    public UpdateHiddenProperty(value: boolean){
+        this.hidden_ = value;
+    }
+    
+    @Property({ type: 'number', spread: 'position' })
+    public x = 0;
+
+    @Property({ type: 'number', spread: 'position' })
+    public y = 0;
+
+    @Property({ type: 'number' })
+    public priority = 0;
+    
+    public constructor(){
         super({
-            position: {
-                x: 0,
-                y: 0,
-            },
-            hidden: false,
-            ...(state || {}),
+            isTemplate: true,
+            isHidden: true,
         });
     }
     
     public GetComponentChildren(){
-        return (Array.from(this.children).filter(child => (typeof child['GetComponentChildren'] === 'function')) as Array<unknown> as Array<ICanvasComponent>);
+        return FilterByFunction<ICanvasComponent>(Array.from(this.children), 'GetComponentChildren');
     }
 
     public GetFigureChildren(){
-        return (this.GetComponentChildren().filter(child => (typeof child['GetFigureChildren'] === 'function')) as Array<unknown> as Array<ICanvasFigure>);
+        return FilterByFunction<ICanvasFigure>(Array.from(this.children), 'GetFigureChildren');
     }
 
     public GetPosition(): ICanvasPosition{
-        return this.state_['position'];
+        return { x: this.x, y: this.y };
     }
 
     public GetOffsetPosition(ctx?: CanvasRenderingContext2D): ICanvasPosition{
@@ -33,26 +46,23 @@ export class CanvasShape extends CustomElement implements ICanvasShape{
     }
 
     public GetContext(): CanvasRenderingContext2D | Path2D | null{
-        let ancestor = FindAncestor(this, 'GetContext');
-        return (ancestor ? (ancestor as any)['GetContext']() : null);
+        return (FindAncestorByFunction<ICanvasComponent>(this, 'GetContext')?.GetContext() || null);
     }
 
     public GetSurfaceContext(): CanvasRenderingContext2D | null{
-        let ancestor = FindAncestor(this, 'GetSurfaceContext');
-        return (ancestor ? (ancestor as any)['GetSurfaceContext']() : null);
+        return (FindAncestorByFunction<ICanvasComponent>(this, 'GetSurfaceContext')?.GetSurfaceContext() || null);
     }
 
     public GetSurfaceSize(): ICanvasSize{
-        let ancestor = FindAncestor(this, 'GetSurfaceSize');
-        return (ancestor ? (ancestor as any)['GetSurfaceSize']() : { width: 0, height: 0 });
+        return (FindAncestorByFunction<ICanvasComponent>(this, 'GetSurfaceSize')?.GetSurfaceSize() || { width: 0, height: 0 });
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        return (this.state_.size || { width: 0, height: 0 });
+        return { width: ((('width' in this) && (this as any)['width']) || 0), height: ((('height' in this) && (this as any)['height']) || 0) };
     }
 
     public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        return (this.state_.size || this.GetParentSize_(ctx));
+        return this.GetSize(ctx);
     }
 
     public GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect{
@@ -64,24 +74,31 @@ export class CanvasShape extends CustomElement implements ICanvasShape{
     }
 
     public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        return TestPoint(point, this.GetOffsetPosition_(), (this.state_.size || { width: 0, height: 0 }), this.GetTransformScale());
+        return TestPoint(point, this.GetOffsetPosition_(), this.GetSize(ctx), this.GetTransformScale());
     }
 
-    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
+    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
         return (this.ContainsPoint(point, ctx) ? this : null);
     }
 
     public GetTransformScale(): ICanvasScaleValue{
-        let ancestor = FindAncestor(this, 'GetTransformScale');
-        return (ancestor ? (ancestor as any)['GetTransformScale']() : { horizontal: 1, vertical: 1 });
+        return (FindAncestorByFunction<ICanvasFigure>(this, 'GetTransformScale')?.GetTransformScale() || { horizontal: 1, vertical: 1 });
     }
 
+    public GetPriority(){
+        return this.priority;
+    }
+    
     public GetShapeChildren(){
-        return (this.GetComponentChildren().filter(child => (typeof child['GetShapeChildren'] === 'function')) as Array<unknown> as Array<ICanvasShape>);
+        return FilterByFunction<ICanvasShape>(Array.from(this.children), 'GetShapeChildren');
+    }
+
+    public Refresh(){
+        this.Refresh_();
     }
 
     public Paint(ctx: CanvasRenderingContext2D | Path2D){
-        !this.state_.hidden && this.Paint_(ctx);
+        !this.hidden_ && this.Paint_(ctx);
     }
 
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){
@@ -90,15 +107,22 @@ export class CanvasShape extends CustomElement implements ICanvasShape{
 
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){}
 
+    protected AttributeChanged_(name: string){
+        super.AttributeChanged_(name);
+        this.ShouldRefreshOnChange_(name) && this.Refresh_();//Refresh if possible
+    }
+
+    protected ShouldRefreshOnChange_(name: string){
+        return true;
+    }
+
     protected Refresh_(){
-        this.dispatchEvent(new CustomEvent(CanvasRefreshEvent, {
-            bubbles: true,
-        }));
+        FindAncestorByFunction<ICanvasComponent>(this, 'Refresh')?.Refresh();
     }
 
     protected GetOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition{
-        let ancestor = FindAncestor(this, 'OffsetPosition');
-        return (ancestor ? (ancestor as any)['OffsetPosition'](this.state_.position, this, ctx) : this.state_.position);
+        const ancestor = FindAncestorByFunction<ICanvasFigure>(this, 'OffsetPosition');
+        return (ancestor ? ancestor.OffsetPosition(this.GetPosition(), (this as unknown as ICanvasFigure), ctx) : this.GetPosition());
     }
 
     protected GetUnscaledOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition{
@@ -106,7 +130,7 @@ export class CanvasShape extends CustomElement implements ICanvasShape{
     }
 
     protected GetParentSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        let ancestor = FindAncestor(this, 'GetFixedSize');
-        return (ancestor ? (ancestor as any)['GetFixedSize'](ctx) : { width: 0, height: 0 });
+        const ancestor = FindAncestorByFunction<ICanvasFigure>(this, 'GetFixedSize');
+        return (ancestor ? ancestor.GetFixedSize(ctx) : { width: 0, height: 0 });
     }
 }

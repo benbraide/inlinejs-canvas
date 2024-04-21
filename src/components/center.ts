@@ -1,13 +1,20 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasAlign } from "./align";
+import { RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { ICanvasAlignment } from "../types";
+import { CanvasAlignElement } from "./align";
 
-export class CanvasCenter extends CanvasAlign{
+export class CanvasCenterElement extends CanvasAlignElement{
     public constructor(){
         super();
-        this.state_.value.horizontal = this.state_.value.vertical = 'center';
+    }
+
+    protected GetAlignment_(): ICanvasAlignment{
+        return {
+            horizontal: 'center',
+            vertical: 'center',
+        };
     }
 }
 
 export function CanvasCenterCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-center'), CanvasCenter);
+    RegisterCustomElement(CanvasCenterElement, 'canvas-center');
 }

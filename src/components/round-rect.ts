@@ -1,51 +1,81 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasPath } from "./path";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasPathElement } from "./path";
+import { ICanvasPosition, ICanvasSize } from "../types";
 
-export class CanvasRoundRect extends CanvasPath{
+interface ICanvasRoundRectPart{
+    position: ICanvasPosition;
+    size: ICanvasSize;
+}
+
+interface ICanvasRoundRectParts{
+    topLeft: ICanvasRoundRectPart;
+    topRight: ICanvasRoundRectPart;
+    bottomRight: ICanvasRoundRectPart;
+    bottomLeft: ICanvasRoundRectPart;
+}
+
+export class CanvasRoundRectElement extends CanvasPathElement{
+    protected parts_: ICanvasRoundRectParts | null = null;
+
+    @Property({ type: 'number', spread: 'size' })
+    public width = 0;
+
+    @Property({ type: 'number', spread: 'size' })
+    public height = 0;
+
+    @Property({ type: 'number' })
+    public radius = 0;
+    
     public constructor(){
-        super({
-            size: {
-                width: 0,
-                height: 0,
-            },
-            radius: 0,
-        });
-
-        this.append(document.createElement('x-canvas-arc'));//Top-Left
-        this.append(document.createElement('x-canvas-arc'));//Top-Right
-        this.append(document.createElement('x-canvas-arc'));//Bottom-Right
-        this.append(document.createElement('x-canvas-arc'));//Bottom-Left
-
-        this.state_.close = false;
-        this.UpdateParts_(true);
+        super();
     }
     
     protected AttributeChanged_(name: string){
         super.AttributeChanged_(name);
-        ['size', 'width', 'height', 'radius'].includes(name) && this.UpdateParts_(name === 'radius');
+        ['width', 'height', 'radius'].includes(name) && (this.parts_ = null);
     }
 
-    protected UpdateParts_(radiusUpdated: boolean){
-        let [topLeft, topRight, bottomRight, bottomLeft] = this.children;
+    protected Draw_(){
+        if (!this.ctx_){
+            return;
+        }
         
-        topLeft.setAttribute('position', `0 ${this.state_.size.height}`);
-        radiusUpdated && topLeft.setAttribute('size', `${this.state_.radius} 0`);
-        radiusUpdated && topLeft.setAttribute('radius', this.state_.radius.toString());
-    
-        topRight.setAttribute('position', `${this.state_.size.width} ${this.state_.size.height}`);
-        radiusUpdated && topRight.setAttribute('size', `0 ${-this.state_.radius}`);
-        radiusUpdated && topRight.setAttribute('radius', this.state_.radius.toString());
+        let unscaledPosition = this.GetUnscaledOffsetPosition_(), renderPart = ({ position, size }: ICanvasRoundRectPart) => {
+            const computedPosition: ICanvasPosition = {
+                x: (position.x + unscaledPosition.x),
+                y: (position.y + unscaledPosition.y),
+            };
+            this.ctx_!.arcTo(computedPosition.x, computedPosition.y, (computedPosition.x + size.width), (computedPosition.y + size.height), this.radius);
+        };
 
-        bottomRight.setAttribute('position', `${this.state_.size.width} 0`);
-        radiusUpdated && bottomRight.setAttribute('size', `${-this.state_.radius} 0`);
-        radiusUpdated && bottomRight.setAttribute('radius', this.state_.radius.toString());
+        this.ctx_.moveTo(unscaledPosition.x, (unscaledPosition.y + this.radius));
+        this.parts_ = (this.parts_ || this.ResolveParts_());
+        
+        ['bottomLeft', 'bottomRight', 'topRight', 'topLeft'].forEach(key => renderPart(this.parts_![key]));
+    }
 
-        bottomLeft.setAttribute('position', '0 0');
-        radiusUpdated && bottomLeft.setAttribute('size', `0 ${this.state_.radius}`);
-        radiusUpdated && bottomLeft.setAttribute('radius', this.state_.radius.toString());
+    protected ResolveParts_(){
+        return {
+            topLeft: {
+                position: { x: 0, y: 0 },
+                size: { width: 0, height: this.radius },
+            },
+            topRight: {
+                position: { x: this.width, y: 0 },
+                size: { width: -this.radius, height: 0 },
+            },
+            bottomRight: {
+                position: { x: this.width, y: this.height },
+                size: { width: 0, height: -this.radius },
+            },
+            bottomLeft: {
+                position: { x: 0, y: this.height },
+                size: { width: this.radius, height: 0 },
+            },
+        };
     }
 }
 
 export function CanvasRoundRectCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-round-rect'), CanvasRoundRect);
+    RegisterCustomElement(CanvasRoundRectElement, 'canvas-round-rect');
 }

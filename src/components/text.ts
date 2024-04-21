@@ -1,105 +1,141 @@
-import { GetGlobal } from "@benbraide/inlinejs";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasPosition, ICanvasSize } from "../types";
 import { TestPoint } from "../utilities/test-point";
-import { CanvasFullShape } from "./full-shape";
+import { CanvasFullShapeElement } from "./full-shape";
+import { AssignContextValue, GuardContext, TryGuardContext } from "../utilities/context";
+import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 
-const fontKeys = ['font-family', 'font-size', 'font-style', 'font-weight', 'line-height'];
+export class CanvasTextElement extends CanvasFullShapeElement{
+    protected observer_: globalThis.MutationObserver | null = null;
+    
+    protected font_ = '';
+    protected size_: ICanvasSize | null = null;
 
-export class CanvasText extends CanvasFullShape{
-    private font_ = '';
-    private size_: ICanvasSize | null = null;
+    @Property({ type: 'string', spread: 'font' })
+    public fontFamily = 'sans-serif';
+
+    @Property({ type: 'string', spread: 'font' })
+    public fontSize = '1rem';
+
+    @Property({ type: 'string', spread: 'font' })
+    public fontStyle = 'normal';
+
+    @Property({ type: 'string', spread: 'font' })
+    public fontWeight = 'normal';
+    
+    @Property({ type: 'string', spread: 'font' })
+    public lineHeight = 'normal';
+
+    @Property({ type: 'string' })
+    public align: CanvasTextAlign = 'left';
+
+    @Property({ type: 'string' })
+    public baseline: CanvasTextBaseline = 'top';
+
+    @Property({ type: 'string' })
+    public direction: CanvasDirection = 'inherit';
+
+    @Property({ type: 'string' })
+    public value = '';
+
+    @Property({ type: 'boolean' })
+    public cache = true;
     
     public constructor(){
-        super({
-            'font-family': 'sans-serif',
-            'font-size': '1rem',
-            'font-style': 'normal',
-            'font-weight': 'normal',
-            'line-height': 'normal',
-            align: <CanvasTextAlign>'left',
-            baseline: <CanvasTextBaseline>'top',
-            direction: <CanvasDirection>'inherit',
-            value: '',
-            cache: true,
-        });
-
-        this.font_ = this.ComputeFont_();
-        this.wrapper_.AddBooleanAttribute('cache');
+        super();
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         if (this.size_){
-            return this.size_;
+            return { ...this.size_ };
         }
         
+        let size: ICanvasSize = { width: 0, height: 0 };
         if (!ctx){
-            return { width: 0, height: 0 };
+            return size;
         }
-        
-        this.ApplyStyles_(ctx);
-        
-        let metrics = ctx.measureText(this.ComputeValue_());
-        let height = (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-        
-        return (this.state_.cache ? (this.size_ = { width: metrics.width, height }) : ({ width: metrics.width, height }));
-    }
 
-    public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        return this.GetSize(ctx);
+        GuardContext(ctx, (ctx) => {
+            this.ApplyStyles_(ctx);
+            const metrics = ctx.measureText(this.ComputeValue_());
+            size = {
+                width: metrics.width,
+                height: (metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
+            };
+            this.cache && this.value.trim() && (this.size_ = { ...size });
+        });
+        
+        return size;
     }
 
     public ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
         return TestPoint(point, this.GetOffsetPosition_(ctx), this.GetSize(ctx), this.GetTransformScale());
     }
+
+    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined){
+        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
+        
+        if (globalThis.MutationObserver){
+            this.observer_ = new globalThis.MutationObserver(() => (!this.value.trim() && this.Refresh_()));
+            this.observer_.observe(this, { childList: true, subtree: true, characterData: true });
+        }
+
+        scope.AddUninitCallback(() => {
+            this.observer_?.disconnect();
+            this.observer_ = null;
+        });
+    }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        ('save' in ctx) && ctx.save();
-
-        this.ApplyStyles_(ctx);
+        TryGuardContext(ctx, (ctx) => {
+            this.ApplyStyles_(ctx);
         
-        let position = this.GetUnscaledOffsetPosition_(('stroke' in ctx) ? ctx : undefined);
-        if (this.state_.mode === 'stroke' && 'strokeText' in ctx){
-            ctx.strokeText(this.ComputeValue_(), position.x, position.y, (this.state_.size.width || undefined));
-        }
-        else if (this.state_.mode !== 'stroke' && 'fillText' in ctx){
-            ctx.fillText(this.ComputeValue_(), position.x, position.y, (this.state_.size.width || undefined));
-        }
-
-        ('restore' in ctx) && ctx.restore();
+            let position = this.GetUnscaledOffsetPosition_(('stroke' in ctx) ? ctx : undefined);
+            if (this.mode === 'stroke' && 'strokeText' in ctx){
+                ctx.strokeText(this.ComputeValue_(), position.x, position.y, (this.width || undefined));
+            }
+            else if (this.mode !== 'stroke' && 'fillText' in ctx){
+                ctx.fillText(this.ComputeValue_(), position.x, position.y, (this.width || undefined));
+            }
+        });
     }
 
     protected AttributeChanged_(name: string){
         super.AttributeChanged_(name);
-        fontKeys.includes(name) && (this.font_ = this.ComputeFont_());
+        ('font' in this.spreads_) && this.spreads_.font.includes(name) && (this.font_ = '');
         (name === 'value' || name === 'cache') && (this.size_ = null);
     }
 
-    private ApplyStyles_(ctx: CanvasRenderingContext2D | Path2D){
-        ('font' in ctx) && (ctx.font = this.font_);
-        ('textAlign' in ctx) && (ctx.textAlign = this.state_.align);
-        ('textBaseline' in ctx) && (ctx.textBaseline = this.state_.baseline);
-        ('direction' in ctx) && (ctx.direction = this.state_.direction);
+    protected ShouldRefreshOnChange_(name: string){
+        return (name !== 'cache');
     }
 
-    private ComputeFont_(){
+    protected ApplyStyles_(ctx: CanvasRenderingContext2D | Path2D){
+        AssignContextValue(ctx, 'font', (this.font_ = (this.font_ || this.ComputeFont_())));
+        AssignContextValue(ctx, 'textAlign', this.align);
+        AssignContextValue(ctx, 'textBaseline', this.baseline);
+        AssignContextValue(ctx, 'direction', this.direction);
+    }
+
+    protected ComputeFont_(){
         let parts = new Array<string>();
 
-        parts.push((this.state_['line-height'] === 'normal') ? this.state_['font-size'] : `${this.state_['font-size']}/${this.state_['line-height']}`);
-        parts.push(this.state_['font-family'] || 'san-serif');
+        parts.push((this.lineHeight === 'normal') ? this.fontSize : `${this.fontSize}/${this.lineHeight}`);
+        parts.push(this.fontFamily || 'san-serif');
 
-        (this.state_['font-style'] !== 'normal') && parts.push(this.state_['font-style']);
-        (this.state_['font-weight'] !== 'normal') && parts.push(this.state_['font-weight']);
+        (this.fontStyle !== 'normal') && parts.push(this.fontStyle);
+        (this.fontWeight !== 'normal') && parts.push(this.fontWeight);
 
         this.size_ = null;
         
         return parts.join(' ');
     }
 
-    private ComputeValue_(){
-        return (this.state_.value || this.textContent?.trim() || '');
+    protected ComputeValue_(){
+        return (this.value || this.textContent || '').trim();
     }
 }
 
 export function CanvasTextCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-text'), CanvasText);
+    RegisterCustomElement(CanvasTextElement, 'canvas-text');
 }

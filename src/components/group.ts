@@ -1,14 +1,17 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasParent } from "./parent";
+import { RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasParentElement } from "./parent";
+import { TryGuardContext } from "../utilities/context";
 
-export class CanvasGroup extends CanvasParent{
+export class CanvasGroupElement extends CanvasParentElement{
+    public constructor(){
+        super();
+    }
+    
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        ('save' in ctx) && ctx.save();
-        super.Render_(ctx);
-        ('restore' in ctx) && ctx.restore();
+        TryGuardContext(ctx, ctx => super.Render_(ctx));
     }
 }
 
 export function CanvasGroupCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-group'), CanvasGroup);
+    RegisterCustomElement(CanvasGroupElement, 'canvas-group');
 }

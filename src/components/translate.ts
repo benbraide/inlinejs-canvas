@@ -1,12 +1,12 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasTransform } from "./transform";
+import { RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasTransformElement } from "./transform";
 
-export class CanvasTranslate extends CanvasTransform{
-    protected Apply_(ctx: CanvasRenderingContext2D | Path2D){
-        this.Translate_(ctx);
+export class CanvasTranslateElement extends CanvasTransformElement{
+    public constructor(){
+        super();
     }
 }
 
 export function CanvasTranslateCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-translate'), CanvasTranslate);
+    RegisterCustomElement(CanvasTranslateElement, 'canvas-translate');
 }

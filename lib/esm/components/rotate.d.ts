@@ -1,9 +1,12 @@
-import { ICanvasFigure, ICanvasPosition } from "../types";
-import { CanvasTransform } from "./transform";
-export declare class CanvasRotate extends CanvasTransform {
+import { CanvasAlignmentType, ICanvasFigure, ICanvasPosition } from "../types";
+import { CanvasTransformElement } from "./transform";
+export declare class CanvasRotateElement extends CanvasTransformElement {
+    angle: string;
+    horizontalOrigin: CanvasAlignmentType;
+    verticalOrigin: CanvasAlignmentType;
     constructor();
     OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition;
-    protected Cast_(name: string, value: any): any;
+    protected ComputeDisplacement_(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasPosition;
     protected Apply_(ctx: CanvasRenderingContext2D | Path2D): void;
 }
 export declare function CanvasRotateCompact(): void;

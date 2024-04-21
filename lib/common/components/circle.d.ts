@@ -1,10 +1,10 @@
 import { ICanvasSize } from "../types";
-import { CanvasPath } from "./path";
-export declare class CanvasCircle extends CanvasPath {
+import { CanvasPathElement } from "./path";
+export declare class CanvasCircleElement extends CanvasPathElement {
+    radius: number;
     constructor();
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
-    GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
-    GetRadius(): any;
+    GetRadius(): number;
     protected Fill_(): void;
 }
 export declare function CanvasCircleCompact(): void;

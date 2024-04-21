@@ -1,12 +1,16 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasShape } from "./shape";
+import { RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasShapeElement } from "./shape";
 
-export class CanvasClosePath extends CanvasShape{
+export class CanvasClosePathElement extends CanvasShapeElement{
+    public constructor(){
+        super();
+    }
+    
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         ctx.closePath();
     }
 }
 
 export function CanvasClosePathCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-close-path'), CanvasClosePath);
+    RegisterCustomElement(CanvasClosePathElement, 'canvas-close-path');
 }

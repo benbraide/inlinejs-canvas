@@ -1,5 +1,5 @@
-import { CanvasTransform } from "./transform";
-export declare class CanvasTranslate extends CanvasTransform {
-    protected Apply_(ctx: CanvasRenderingContext2D | Path2D): void;
+import { CanvasTransformElement } from "./transform";
+export declare class CanvasTranslateElement extends CanvasTransformElement {
+    constructor();
 }
 export declare function CanvasTranslateCompact(): void;

@@ -1,30 +1,45 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasAlignmentType, ICanvasFigure, ICanvasPosition } from "../types";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasAlignmentType, ICanvasAlignment, ICanvasFigure, ICanvasPosition } from "../types";
 import { Align } from "../utilities/align";
-import { CanvasParent } from "./parent";
+import { CanvasParentElement } from "./parent";
 
-export class CanvasAlign extends CanvasParent{
+export class CanvasAlignElement extends CanvasParentElement{
+    @Property({ type: 'string', spread: 'alignment' })
+    public horizontal: CanvasAlignmentType = 'start';
+
+    @Property({ type: 'string', spread: 'alignment' })
+    public vertical: CanvasAlignmentType = 'start';
+
+    @Property({ type: 'boolean' })
+    public group: boolean = false;
+    
     public constructor(){
-        super({
-            value: { horizontal: <CanvasAlignmentType>'start', vertical: <CanvasAlignmentType>'start' },
-            group: false,
-        });
+        super();
     }
 
     public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition{
-        let myPosition = this.GetOffsetPosition_(ctx), parentSize = this.GetParentSize_(null), childSize = ((source && !this.state_.group) ? source.GetSize(ctx || null) : this.GetChildSize_(ctx || null));
-        let alignment: ICanvasPosition = {
-            x: Align(this.state_.value.horizontal, childSize.width, parentSize.width),
-            y: Align(this.state_.value.vertical, childSize.height, parentSize.height),
+        const myPosition = this.GetOffsetPosition_(ctx), parentSize = this.GetParentSize_(null), alignment = this.GetAlignment_();
+        const childSize = ((source && !this.group) ? source.GetSize(ctx || null) : this.GetChildSize_(ctx || null));
+
+        const computedAlignment: ICanvasPosition = {
+            x: Align(alignment.horizontal, childSize.width, parentSize.width),
+            y: Align(alignment.vertical, childSize.height, parentSize.height),
         };
 
         return {
-            x: (position.x + alignment.x + myPosition.x),
-            y: (position.y + alignment.y + myPosition.y),
+            x: (position.x + computedAlignment.x + myPosition.x),
+            y: (position.y + computedAlignment.y + myPosition.y),
+        };
+    }
+
+    protected GetAlignment_(): ICanvasAlignment{
+        return {
+            horizontal: this.horizontal,
+            vertical: this.vertical,
         };
     }
 }
 
 export function CanvasAlignCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-align'), CanvasAlign);
+    RegisterCustomElement(CanvasAlignElement, 'canvas-align');
 }

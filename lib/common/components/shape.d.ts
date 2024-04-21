@@ -1,7 +1,12 @@
 import { CustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasScaleValue, ICanvasShape, ICanvasSize } from "../types";
-export declare class CanvasShape extends CustomElement implements ICanvasShape {
-    constructor(state?: Record<string, any>);
+export declare class CanvasShapeElement extends CustomElement implements ICanvasShape {
+    protected hidden_: boolean;
+    UpdateHiddenProperty(value: boolean): void;
+    x: number;
+    y: number;
+    priority: number;
+    constructor();
     GetComponentChildren(): ICanvasComponent[];
     GetFigureChildren(): ICanvasFigure[];
     GetPosition(): ICanvasPosition;
@@ -14,12 +19,16 @@ export declare class CanvasShape extends CustomElement implements ICanvasShape {
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
     OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
-    FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
+    FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
     GetTransformScale(): ICanvasScaleValue;
+    GetPriority(): number;
     GetShapeChildren(): ICanvasShape[];
+    Refresh(): void;
     Paint(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
+    protected AttributeChanged_(name: string): void;
+    protected ShouldRefreshOnChange_(name: string): boolean;
     protected Refresh_(): void;
     protected GetOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition;
     protected GetUnscaledOffsetPosition_(ctx?: CanvasRenderingContext2D): ICanvasPosition;

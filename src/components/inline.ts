@@ -1,28 +1,28 @@
-import { EvaluateLater, GetGlobal, UseEffect } from "@benbraide/inlinejs";
-import { CanvasParent } from "./parent";
+import { EvaluateLater, UseEffect } from "@benbraide/inlinejs";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasParentElement } from "./parent";
 
-export class CanvasInline extends CanvasParent{
+export class CanvasInlineElement extends CanvasParentElement{
+    @Property({ type: 'string' })
+    public value = '';
+
+    @Property({ type: 'boolean' })
+    public effect = false;
+    
     public constructor(){
-        super({
-            value: '',
-            effect: false,
-        });
-
-        this.wrapper_.AddBooleanAttribute('effect');
-    }
-
-    protected Cast_(name: string, value: any){
-        return ((name === 'effect') ? this.hasAttribute('effect') : super.Cast_(name, value));
+        super();
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        let evaluated = false, componentId = (GetGlobal().InferComponentFrom(this)?.GetId() || ''), evaluate = EvaluateLater({ componentId,
+        let evaluated = false, evaluate = EvaluateLater({
+            componentId: this.componentId_,
             contextElement: this,
-            expression: (this.state_.value || this.textContent || ''),
+            expression: (this.value || this.textContent || ''),
         });
 
-        if (this.state_.effect){
-            UseEffect({ componentId,
+        if (this.effect){
+            UseEffect({
+                componentId: this.componentId_,
                 contextElement: this,
                 callback: () => {
                     if (!evaluated){
@@ -44,5 +44,5 @@ export class CanvasInline extends CanvasParent{
 }
 
 export function CanvasInlineCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-inline'), CanvasInline);
+    RegisterCustomElement(CanvasInlineElement, 'canvas-inline');
 }

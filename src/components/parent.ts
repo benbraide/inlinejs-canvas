@@ -1,18 +1,21 @@
-import { ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasSize } from "../types";
-import { CanvasShape } from "./shape";
+import { JournalTry } from "@benbraide/inlinejs";
+import { ICanvasFigure, ICanvasPosition, ICanvasRect, ICanvasShape, ICanvasSize, ICanvasSurface } from "../types";
+import { FindAncestorByFunction } from "../utilities/ancestor";
+import { CanvasShapeElement } from "./shape";
 
-export class CanvasParent extends CanvasShape{
-    public constructor(state?: Record<string, any>){
-        super(state);
+export class CanvasParentElement extends CanvasShapeElement{
+    public constructor(){
+        super();
+        this.options_.isTemplate = false;
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         return this.GetChildSize_(ctx);
     }
     
-    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        for (let child of this.GetFigureChildren()){
-            let found = child.FindChildWithPoint(point, ctx);
+    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
+        for (const child of this.GetFigureChildren()){
+            const found = child.FindFigureWithPoint(point, ctx);
             if (found){
                 return found;
             }
@@ -26,11 +29,25 @@ export class CanvasParent extends CanvasShape{
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        this.GetShapeChildren().forEach(child => child.Paint(ctx));
+        if (FindAncestorByFunction<ICanvasSurface>(this, 'IsPriorityAware')?.IsPriorityAware()){
+            const inPriority: Record<string, Array<ICanvasShape>> = {};
+            this.GetShapeChildren().forEach((child) => {
+                const priority = child.GetPriority();
+                inPriority[priority] = (inPriority[priority] || []);
+                inPriority[priority].push(child);
+            });
+
+            Object.keys(inPriority).sort().forEach((priority) => {
+                inPriority[priority].forEach(child => JournalTry(() => child.Paint(ctx), 'Canvas.Render'));
+            });
+        }
+        else{
+            this.GetShapeChildren().forEach(child => child.Paint(ctx));
+        }
     }
 
     protected OffsetPosition_(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition{
-        let myPosition = this.GetOffsetPosition_(ctx);
+        const myPosition = this.GetOffsetPosition_(ctx);
         return {
             x: (position.x + myPosition.x),
             y: (position.y + myPosition.y),
@@ -39,8 +56,12 @@ export class CanvasParent extends CanvasShape{
 
     protected GetChildSize_(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         let rect: ICanvasRect | null = null;
-        for (let child of this.GetFigureChildren()){
-            let childRect = child.GetRect(ctx);
+        for (const child of this.GetFigureChildren()){
+            const childRect = { ...child.GetRect(ctx) };
+
+            childRect.x = ((childRect.x < 0) ? 0 : childRect.x);
+            childRect.y = ((childRect.y < 0) ? 0 : childRect.y);
+            
             if (rect){//Union with previous
                 rect = {
                     x: ((childRect.x < rect.x) ? childRect.x : rect.x),

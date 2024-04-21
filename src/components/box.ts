@@ -1,29 +1,32 @@
-import { GetGlobal } from "@benbraide/inlinejs";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasFigure, ICanvasPosition, ICanvasSize } from "../types";
-import { CanvasParent } from "./parent";
+import { CanvasParentElement } from "./parent";
+import { TryGuardContext } from "../utilities/context";
 
-export class CanvasBox extends CanvasParent{
+export class CanvasBoxElement extends CanvasParentElement{
+    @Property({ type: 'number', spread: 'size' })
+    public width = 0;
+
+    @Property({ type: 'number', spread: 'size' })
+    public height = 0;
+    
     public constructor(){
-        super({
-            size: { width: 0, height: 0 },
-        });
+        super();
+    }
+
+    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
+        return (super.FindFigureWithPoint(point, ctx) || (this.ContainsPoint(point, ctx) ? this : null));
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
-        return this.state_.size;
-    }
-
-    public FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null{
-        return (super.FindChildWithPoint(point, ctx) || (this.ContainsPoint(point, ctx) ? this : null));
+        return { width: this.width, height: this.height };
     }
 
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        ('save' in ctx) && ctx.save();
-        super.Render_(ctx);
-        ('restore' in ctx) && ctx.restore();
+        TryGuardContext(ctx, ctx => super.Render_(ctx));
     }
 }
 
 export function CanvasBoxCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-box'), CanvasBox);
+    RegisterCustomElement(CanvasBoxElement, 'canvas-box');
 }

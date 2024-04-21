@@ -1,23 +1,24 @@
-import { GetGlobal } from "@benbraide/inlinejs";
-import { CanvasShape } from "./shape";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
+import { CanvasFullShapeElement } from "./full-shape";
 
-export class CanvasArc extends CanvasShape{
+export class CanvasArcElement extends CanvasFullShapeElement{
+    @Property({ type: 'number' })
+    public radius = 0;
+    
     public constructor(){
-        super({
-            size: {
-                width: 0,
-                height: 0,
-            },
-            radius: 0,
-        });
+        super();
+    }
+
+    protected Paint_(ctx: CanvasRenderingContext2D | Path2D){
+        this.Render_(ctx);
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
-        let position = this.GetUnscaledOffsetPosition_();
-        ctx.arcTo(position.x, position.y, (position.x + this.state_.size.width), (position.y + this.state_.size.height), this.state_.radius);
+        const position = this.GetUnscaledOffsetPosition_();
+        ctx.arcTo(position.x, position.y, (position.x + this.width), (position.y + this.height), this.radius);
     }
 }
 
 export function CanvasArcCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-arc'), CanvasArc);
+    RegisterCustomElement(CanvasArcElement, 'canvas-arc');
 }

@@ -19,53 +19,58 @@ export interface ICanvasRect{
     height: number;
 }
 
+export interface ICanvasCircle{
+    x: number;
+    y: number;
+    radius: number;
+}
+
 export interface ICanvasScaleValue{
     horizontal: number;
     vertical: number;
 }
 
-export type ICanvasPaintMode = 'fill' | 'stroke';
+export type CanvasPaintModeType = 'fill' | 'stroke';
 
 export type CanvasAlignmentType = 'start' | 'center' | 'end';
 
-export interface ICanvasCoreState{
-    hidden: boolean;
-    position: ICanvasPosition;
-    size: ICanvasSize;
-}
-
-export interface ICanvasShapeState extends ICanvasCoreState{
-    mode: ICanvasPaintMode;
-    color: string;
+export interface ICanvasAlignment{
+    horizontal: CanvasAlignmentType;
+    vertical: CanvasAlignmentType;
 }
 
 export type ICanvasPaintRect = ICanvasRect;
 
 export interface ICanvasComponent{
     GetComponentChildren(): Array<ICanvasComponent>;
+    GetContext(): CanvasRenderingContext2D | Path2D | null;
+    GetSurfaceContext(): CanvasRenderingContext2D | null;
+    GetSurfaceSize(): ICanvasSize;
+    Refresh(): void;
+}
+
+export interface ICanvasSurface extends ICanvasComponent{
+    Render(): void;
+    IsPriorityAware(): boolean;
 }
 
 export interface ICanvasFigure extends ICanvasComponent{
     GetFigureChildren(): Array<ICanvasFigure>;
     GetPosition(): ICanvasPosition;
     GetOffsetPosition(ctx?: CanvasRenderingContext2D): ICanvasPosition;
-    GetContext(): CanvasRenderingContext2D | Path2D | null;
-    GetSurfaceContext(): CanvasRenderingContext2D | null;
-    GetSurfaceSize(): ICanvasSize;
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetRect(ctx: CanvasRenderingContext2D | null): ICanvasRect;
     OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D): ICanvasPosition;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
-    FindChildWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
+    FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): ICanvasFigure | null;
     GetTransformScale(): ICanvasScaleValue;
 }
 
 export interface ICanvasShape extends ICanvasFigure{
+    GetPriority(): number;
     GetShapeChildren(): Array<ICanvasShape>;
     Paint(ctx: CanvasRenderingContext2D | Path2D): void;
 }
 
-export type CanvasBodyDirection = '' | 'n' | 'nw' | 'w' | 'sw' | 's' | 'se' | 'e' | 'ne';
-export type CanvasBodyOrientation = 'horizontal' | 'vertical' | 'none';
-export type CanvasBodyCollisionSide = 'top' | 'right' | 'bottom' | 'left' | 'edge';
+export type CanvasBodyDirectionType = '' | 'n' | 'nw' | 'w' | 'sw' | 's' | 'se' | 'e' | 'ne';

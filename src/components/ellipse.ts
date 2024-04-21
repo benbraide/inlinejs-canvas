@@ -1,42 +1,41 @@
-import { GetGlobal } from "@benbraide/inlinejs";
+import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasSize } from "../types";
-import { CanvasPath } from "./path";
+import { CanvasPathElement } from "./path";
+import { ResolveAngle } from "../utilities/angle";
 
-export class CanvasEllipse extends CanvasPath{
+export class CanvasEllipseElement extends CanvasPathElement{
+    @Property({ type: 'number', spread: 'radius' })
+    public xRadius = 0;
+
+    @Property({ type: 'number', spread: 'radius' })
+    public yRadius = 0;
+
+    @Property({ type: 'string' })
+    public angle = '0';
+    
     public constructor(){
-        super({
-            radius: {
-                'radius-x': 0,
-                'radius-y': 0,
-            },
-            angle: 0,
-        });
+        super();
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         return {
-            width: (this.state_.radius['radius-x'] * 2),
-            height: (this.state_.radius['radius-y'] * 2),
+            width: (this.xRadius * 2),
+            height: (this.yRadius * 2),
         };
     }
 
     public GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         return this.GetSize(ctx);
     }
-
-    protected Cast_(name: string, value: any){
-        return ((name === 'angle' && typeof value === 'string' && /^.+deg$/.test(value)) ? ((Math.PI / 180) * (parseFloat(value.substring(0, (value.length - 3))) || 0)) : super.Cast_(name, value));
-    }
     
     protected Fill_(){
-        let position = this.GetUnscaledOffsetPosition_();
-        this.ctx_ = new Path2D;
-        this.ctx_.ellipse(
-            (position.x + this.state_.radius['radius-x']),
-            (position.y + this.state_.radius['radius-y']),
-            this.state_.radius['radius-x'],
-            this.state_.radius['radius-y'],
-            this.state_.angle,
+        const position = this.GetUnscaledOffsetPosition_();
+        (this.ctx_ = new Path2D).ellipse(
+            (position.x + this.xRadius),
+            (position.y + this.yRadius),
+            this.xRadius,
+            this.yRadius,
+            ResolveAngle(this.angle),
             0,
             (Math.PI * 2),
         );
@@ -44,5 +43,5 @@ export class CanvasEllipse extends CanvasPath{
 }
 
 export function CanvasEllipseCompact(){
-    customElements.define(GetGlobal().GetConfig().GetElementName('canvas-ellipse'), CanvasEllipse);
+    RegisterCustomElement(CanvasEllipseElement, 'canvas-ellipse');
 }

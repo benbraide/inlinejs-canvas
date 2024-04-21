@@ -1,10 +1,12 @@
 import { ICanvasSize } from "../types";
-import { CanvasPath } from "./path";
-export declare class CanvasEllipse extends CanvasPath {
+import { CanvasPathElement } from "./path";
+export declare class CanvasEllipseElement extends CanvasPathElement {
+    xRadius: number;
+    yRadius: number;
+    angle: string;
     constructor();
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     GetFixedSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
-    protected Cast_(name: string, value: any): any;
     protected Fill_(): void;
 }
 export declare function CanvasEllipseCompact(): void;
