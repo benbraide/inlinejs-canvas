@@ -13,16 +13,6 @@ export class CanvasFullShapeElement extends CanvasShapeElement{
     @Property({ type: 'string' })
     public mode: CanvasPaintModeType = 'fill';
 
-    @Property({ type: 'boolean' })
-    public UpdateStrokeProperty(value: boolean){
-        this.mode = (value ? 'stroke' : 'fill');
-    }
-
-    @Property({ type: 'boolean' })
-    public UpdateFillProperty(value: boolean){
-        this.mode = (value ? 'fill' : 'stroke');
-    }
-
     @Property({ type: 'string' })
     public color = '';
 
@@ -41,10 +31,14 @@ export class CanvasFullShapeElement extends CanvasShapeElement{
 
     protected Paint_(ctx: CanvasRenderingContext2D | Path2D){
         TryGuardContext(ctx, (ctx) => {
-            ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
+            if (this.mode === 'stroke' || this.mode === 'both'){
+                ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
+                AssignContextValue(ctx, 'strokeStyle', (this.color || 'black'));
+            }
 
-            (this.mode === 'stroke') && AssignContextValue(ctx, 'strokeStyle', (this.color || 'black'));
-            (this.mode !== 'stroke') && AssignContextValue(ctx, 'fillStyle', (this.color || 'black'));
+            if (this.mode === 'fill' || this.mode === 'both'){
+                AssignContextValue(ctx, 'fillStyle', (this.color || 'black'));
+            }
             
             this.Render_(ctx);
         });

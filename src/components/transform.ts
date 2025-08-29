@@ -12,10 +12,6 @@ export class CanvasTransformElement extends CanvasParentElement{
         return this.FindFigureWithPoint_(this.ComputeDisplacement_(point, ctx), ctx);
     }
 
-    public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
-        return position;
-    }
-    
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         TryGuardContext(ctx, (ctx) => {
             this.Apply_(ctx);

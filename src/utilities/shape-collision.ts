@@ -8,8 +8,9 @@ export function CheckRectangleCollision(rect1: ICanvasRect, rect2: ICanvasRect, 
 }
 
 export function CheckCircleCollision(circle1: ICanvasCircle, circle2: ICanvasCircle, includeTouch = true){
-    const distance = Math.sqrt(((circle1.x - circle2.x) ** 2) + ((circle1.y - circle2.y) ** 2));
-    return (includeTouch ? (distance <= (circle1.radius + circle2.radius)) : (distance < (circle1.radius + circle2.radius)));
+    const distanceSq = ((circle1.x - circle2.x) ** 2) + ((circle1.y - circle2.y) ** 2);
+    const radiiSumSq = (circle1.radius + circle2.radius) ** 2;
+    return (includeTouch ? (distanceSq <= radiiSumSq) : (distanceSq < radiiSumSq));
 }
 
 export function CheckRectangleCircleCollision(rect: ICanvasRect, circle: ICanvasCircle, includeTouch = true){

@@ -173,7 +173,7 @@ export class CanvasSurfaceElement extends CustomElement implements ICanvasSurfac
                     inPriority[priority].push(child);
                 });
 
-                Object.keys(inPriority).sort().forEach((priority) => {
+                Object.keys(inPriority).sort((a, b) => (Number(a) - Number(b))).forEach((priority) => {
                     FilterByFunction<ICanvasShape>(inPriority[priority], 'Paint').forEach(child => JournalTry(() => child.Paint(ctx), 'Canvas.Render'));
                 });
             }
@@ -187,14 +187,35 @@ export class CanvasSurfaceElement extends CustomElement implements ICanvasSurfac
         if (!this.ctx_ || !this.mouseOffset_){
             return null;
         }
-        
-        for (let child of FilterByFunction<ICanvasFigure>(Array.from(this.children), 'FindFigureWithPoint')){
-            let found = child.FindFigureWithPoint(this.mouseOffset_, this.ctx_);
-            if (found){
-                return (found as unknown as Element);
+
+        const children = FilterByFunction<ICanvasFigure>(Array.from(this.children), 'FindFigureWithPoint');
+        if (this.priorityAware){
+            const inPriority: Record<string, Array<ICanvasFigure>> = {};
+            children.forEach((child) => {
+                const priority = (child as unknown as ICanvasShape).GetPriority();
+                inPriority[priority] = (inPriority[priority] || []);
+                inPriority[priority].push(child);
+            });
+
+            const sortedKeys = Object.keys(inPriority).sort((a, b) => (Number(b) - Number(a))); // Sort descending
+            for (const priority of sortedKeys) {
+                for (const child of inPriority[priority]) {
+                    const found = child.FindFigureWithPoint(this.mouseOffset_, this.ctx_);
+                    if (found) {
+                        return (found as unknown as Element);
+                    }
+                }
             }
         }
-        
+        else{ // Default behavior, but iterate backwards (last rendered is on top)
+            for (let i = children.length - 1; i >= 0; --i) {
+                const found = children[i].FindFigureWithPoint(this.mouseOffset_, this.ctx_);
+                if (found) {
+                    return (found as unknown as Element);
+                }
+            }
+        }
+
         return null;
     }
 

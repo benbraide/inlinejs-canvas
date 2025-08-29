@@ -13,19 +13,20 @@ export class CanvasCircleElement extends CanvasPathElement{
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
         return {
-            width: (this.radius * 2),
-            height: (this.radius * 2),
+            width: (Math.abs(this.radius) * 2),
+            height: (Math.abs(this.radius) * 2),
         };
     }
 
     public GetRadius(){
-        return this.radius;
+        return Math.abs(this.radius);
     }
     
     protected Fill_(){
         let position = this.GetUnscaledOffsetPosition_();
+        const radius = Math.abs(this.radius);
         this.ctx_ = new Path2D;
-        this.ctx_.arc((position.x + this.radius), (position.y + this.radius), this.radius, 0, (Math.PI * 2), false);
+        this.ctx_.arc((position.x + radius), (position.y + radius), radius, 0, (Math.PI * 2), false);
     }
 }
 

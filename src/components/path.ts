@@ -1,7 +1,7 @@
 import { CanvasRefreshEvent, ICanvasFigure, CanvasPaintModeType, ICanvasPosition } from "../types";
 import { CanvasParentElement } from "./parent";
 import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
-import { AssignContextValue, CallContextMethod, FillOrStrokeContext, TryGuardContext } from "../utilities/context";
+import { AssignContextValue, CallContextMethod, TryGuardContext } from "../utilities/context";
 
 export class CanvasPathElement extends CanvasParentElement{
     protected ctx_: Path2D | null = null;
@@ -64,8 +64,20 @@ export class CanvasPathElement extends CanvasParentElement{
 
     protected Project_(ctx: CanvasRenderingContext2D | Path2D){
         if (this.ctx_){
-            ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
-            !FillOrStrokeContext(ctx, this.mode, this.color, this.ctx_) && CallContextMethod(ctx, 'addPath', this.ctx_);
+            if (!('strokeStyle' in ctx)) { // It's a Path2D
+                CallContextMethod(ctx, 'addPath', this.ctx_);
+                return;
+            }
+
+            if (this.mode === 'stroke' || this.mode === 'both'){
+                ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
+                ctx.strokeStyle = (this.color || 'black');
+                ctx.stroke(this.ctx_);
+            }
+            if (this.mode === 'fill' || this.mode === 'both'){
+                ctx.fillStyle = (this.color || 'black');
+                ctx.fill(this.ctx_);
+            }
         }
     }
 }

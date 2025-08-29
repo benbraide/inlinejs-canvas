@@ -1,5 +1,13 @@
 import { ICanvasPosition, ICanvasScaleValue, ICanvasSize } from "../types";
 
 export function TestPoint(point: ICanvasPosition, position: ICanvasPosition, size: ICanvasSize, scale: ICanvasScaleValue){
-    return (point.x >= position.x && point.y >= position.y && point.x < (position.x + (size.width * scale.horizontal)) && point.y < (position.y + (size.height * scale.vertical)));
+    const xEnd = position.x + (size.width * scale.horizontal);
+    const yEnd = position.y + (size.height * scale.vertical);
+
+    return (
+        point.x >= Math.min(position.x, xEnd) &&
+        point.x < Math.max(position.x, xEnd) &&
+        point.y >= Math.min(position.y, yEnd) &&
+        point.y < Math.max(position.y, yEnd)
+    );
 }

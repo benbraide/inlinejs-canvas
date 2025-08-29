@@ -2,35 +2,35 @@ export const CanvasRefreshEvent = 'canvas.refresh';
 export const CanvasCollisionEvent = 'canvas.collision';
 export const CanvasCollisionCheckEvent = 'canvas.collision.check';
 
-export interface ICanvasPosition{
+export interface ICanvasPosition extends Record<string, number>{
     x: number;
     y: number;
 }
 
-export interface ICanvasSize{
+export interface ICanvasSize extends Record<string, number>{
     width: number;
     height: number;
 }
 
-export interface ICanvasRect{
+export interface ICanvasRect extends Record<string, number>{
     x: number;
     y: number;
     width: number;
     height: number;
 }
 
-export interface ICanvasCircle{
+export interface ICanvasCircle extends Record<string, number>{
     x: number;
     y: number;
     radius: number;
 }
 
-export interface ICanvasScaleValue{
+export interface ICanvasScaleValue extends Record<string, number>{
     horizontal: number;
     vertical: number;
 }
 
-export type CanvasPaintModeType = 'fill' | 'stroke';
+export type CanvasPaintModeType = 'fill' | 'stroke' | 'both';
 
 export type CanvasAlignmentType = 'start' | 'center' | 'end';
 

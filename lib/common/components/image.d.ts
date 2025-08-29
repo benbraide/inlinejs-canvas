@@ -16,6 +16,6 @@ export declare class CanvasImageElement extends CanvasFullShapeElement {
     protected ShouldRefreshOnChange_(name: string): boolean;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected ResolveSize_(): ICanvasSize;
-    protected ResolvePart_(value: string, target: number, otherValue: number, aspectRatio: number): number;
+    protected ResolvePart_(value: string, target: number): number;
 }
 export declare function CanvasImageCompact(): void;

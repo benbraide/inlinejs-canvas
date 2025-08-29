@@ -121,7 +121,7 @@ export class CanvasTextElement extends CanvasFullShapeElement{
         let parts = new Array<string>();
 
         parts.push((this.lineHeight === 'normal') ? this.fontSize : `${this.fontSize}/${this.lineHeight}`);
-        parts.push(this.fontFamily || 'san-serif');
+        parts.push(this.fontFamily || 'sans-serif');
 
         (this.fontStyle !== 'normal') && parts.push(this.fontStyle);
         (this.fontWeight !== 'normal') && parts.push(this.fontWeight);

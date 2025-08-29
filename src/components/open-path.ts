@@ -40,8 +40,15 @@ export class CanvasOpenPathElement extends CanvasParentElement{
 
     protected Project_(ctx: CanvasRenderingContext2D | Path2D){
         this.close && ctx.closePath();
-        ['lineWidth', 'lineCap', 'lineJoin'].forEach((prop) => AssignContextValue(ctx, prop, this[prop]));
-        FillOrStrokeContext(ctx, this.mode, this.color);
+
+        if (this.mode === 'stroke' || this.mode === 'both'){
+            ['lineWidth', 'lineCap', 'lineJoin'].forEach(prop => AssignContextValue(ctx, prop, this[prop]));
+            FillOrStrokeContext(ctx, 'stroke', this.color || 'black');
+        }
+        
+        if (this.mode === 'fill' || this.mode === 'both'){
+            FillOrStrokeContext(ctx, 'fill', this.color || 'black');
+        }
     }
 }
 

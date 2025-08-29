@@ -15,18 +15,28 @@ export class CanvasScaleElement extends CanvasTransformElement{
     }
 
     public OffsetPosition(position: ICanvasPosition, source: ICanvasFigure | null, ctx?: CanvasRenderingContext2D){
-        return this.OffsetPosition_(position, this, ctx);
-    }
-
-    public FindFigureWithPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
-        return this.FindFigureWithPoint_(point, ctx);
+        const myPosition = this.GetOffsetPosition_(ctx);
+        return {
+            x: (myPosition.x + (position.x * this.horizontal)),
+            y: (myPosition.y + (position.y * this.vertical)),
+        };
     }
 
     public GetTransformScale(): ICanvasScaleValue{
-        return { horizontal: this.horizontal, vertical: this.vertical };
+        const parentScale = super.GetTransformScale();
+        return {
+            horizontal: (parentScale.horizontal * this.horizontal),
+            vertical: (parentScale.vertical * this.vertical),
+        };
+    }
+
+    protected ComputeDisplacement_(point: ICanvasPosition, ctx: CanvasRenderingContext2D){
+        const displacement = super.ComputeDisplacement_(point, ctx);
+        return { x: (displacement.x / this.horizontal), y: (displacement.y / this.vertical) };
     }
 
     protected Apply_(ctx: CanvasRenderingContext2D | Path2D){
+        super.Apply_(ctx);
         CallContextMethod(ctx, 'scale', this.horizontal, this.vertical);
     }
 }

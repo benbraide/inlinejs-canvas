@@ -8,15 +8,13 @@ export class CanvasRectElement extends CanvasFullShapeElement{
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){
         const position = this.GetUnscaledOffsetPosition_();
-        if (this.mode === 'stroke' && 'strokeRect' in ctx){
-            ctx.strokeRect(position.x, position.y, this.width, this.height);
-        }
-        else if (this.mode !== 'stroke' && 'fillRect' in ctx){
-            ctx.fillRect(position.x, position.y, this.width, this.height);
-        }
-        else if ('rect' in ctx){
+        if (!('fillRect' in ctx)) { // Must be Path2D
             ctx.rect(position.x, position.y, this.width, this.height);
+            return;
         }
+
+        (this.mode === 'fill' || this.mode === 'both') && ctx.fillRect(position.x, position.y, this.width, this.height);
+        (this.mode === 'stroke' || this.mode === 'both') && ctx.strokeRect(position.x, position.y, this.width, this.height);
     }
 }
 

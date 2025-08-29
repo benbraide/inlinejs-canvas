@@ -10,7 +10,7 @@ export function GuardContext(ctx: CanvasRenderingContext2D, callback: (ctx: Canv
 export function TryGuardContext(ctx: CanvasRenderingContext2D | Path2D, callback: (ctx: CanvasRenderingContext2D | Path2D) => void){
     ('save' in ctx) && ctx.save();
     JournalTry(() => callback(ctx), 'Canvas.TryGuardContext');
-    ('save' in ctx) && ctx.restore();
+    ('restore' in ctx) && ctx.restore();
 }
 
 export function AssignContextValue(ctx: CanvasRenderingContext2D | Path2D, key: string, value: any){
@@ -22,17 +22,13 @@ export function CallContextMethod<T = void>(ctx: CanvasRenderingContext2D | Path
 }
 
 export function FillOrStrokeContext(ctx: CanvasRenderingContext2D | Path2D, mode: CanvasPaintModeType, color?: string, path?: Path2D){
-    if (mode === 'stroke' && 'strokeStyle' in ctx){
-        ctx.strokeStyle = (color || 'black');
-        path ? ctx.stroke(path) : ctx.stroke();
-    }
-    else if (mode !== 'stroke' && 'fillStyle' in ctx){
+    if ((mode === 'fill' || mode === 'both') && 'fillStyle' in ctx){
         ctx.fillStyle = (color || 'black');
         path ? ctx.fill(path) : ctx.fill();
     }
-    else{
-        return false;
-    }
     
-    return true;
+    if ((mode === 'stroke' || mode === 'both') && 'strokeStyle' in ctx){
+        ctx.strokeStyle = (color || 'black');
+        path ? ctx.stroke(path) : ctx.stroke();
+    }
 }

@@ -18,9 +18,15 @@ export class CanvasEllipseElement extends CanvasPathElement{
     }
 
     public GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize{
+        const angle = ResolveAngle(this.angle);
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const xRadius = Math.abs(this.xRadius);
+        const yRadius = Math.abs(this.yRadius);
+
         return {
-            width: (this.xRadius * 2),
-            height: (this.yRadius * 2),
+            width: (2 * Math.sqrt(Math.pow(xRadius * cos, 2) + Math.pow(yRadius * sin, 2))),
+            height: (2 * Math.sqrt(Math.pow(xRadius * sin, 2) + Math.pow(yRadius * cos, 2))),
         };
     }
 
@@ -30,11 +36,13 @@ export class CanvasEllipseElement extends CanvasPathElement{
     
     protected Fill_(){
         const position = this.GetUnscaledOffsetPosition_();
+        const xRadius = Math.abs(this.xRadius);
+        const yRadius = Math.abs(this.yRadius);
         (this.ctx_ = new Path2D).ellipse(
-            (position.x + this.xRadius),
-            (position.y + this.yRadius),
-            this.xRadius,
-            this.yRadius,
+            (position.x + xRadius),
+            (position.y + yRadius),
+            xRadius,
+            yRadius,
             ResolveAngle(this.angle),
             0,
             (Math.PI * 2),
