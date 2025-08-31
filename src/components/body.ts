@@ -66,13 +66,13 @@ export class CanvasBodyElement extends CanvasParentElement{
      * An expression to execute when a collision occurs.
      */
     @Property({ type: 'string' })
-    public oncollision = '';
+    public oncustomcollision = '';
 
     /**
      * An expression to execute when the 'phase' property changes, typically used for boundary collisions.
      */
     @Property({ type: 'string' })
-    public onphase = '';
+    public oncustomphase = '';
 
     public constructor(){
         super();
@@ -376,7 +376,7 @@ export class CanvasBodyElement extends CanvasParentElement{
             EvaluateLater({
                 componentId: this.componentId_,
                 contextElement: this,
-                expression: this.oncollision,
+                expression: this.oncustomcollision,
                 disableFunctionCall: false,
             })(undefined, [], { target: source, direction: this.direction, oldDirection: originalDirection });
         }
@@ -385,7 +385,7 @@ export class CanvasBodyElement extends CanvasParentElement{
             EvaluateLater({
                 componentId: source.componentId_,
                 contextElement: source,
-                expression: source.oncollision,
+                expression: source.oncustomcollision,
                 disableFunctionCall: false,
             })(undefined, [], { target: this, direction: source.direction, oldDirection: sourceOldDirection });
         }
@@ -403,34 +403,51 @@ export class CanvasBodyElement extends CanvasParentElement{
         this.ApplySteps_(this.steps);
         if (!this.phase){
             const surfaceSize = this.GetSurfaceSize(), size = this.GetSize(null), originalDirection = this.direction;
+            const collisionSides = new Array<string>(), addCollisionSide = (side: string) => {
+                if (!collisionSides.includes(side)){
+                    collisionSides.push(side);
+                    if (side === 'top' || side === 'bottom'){
+                        this.direction *= -1;
+                    }
+                    else{
+                        this.direction = Math.PI - this.direction;
+                    }
+                }
+            };
             
             // Check for vertical boundary collision and reflect angle
-            if ((this.y < 0 && Math.sin(this.direction) < 0) || ((this.y + size.height) > surfaceSize.height && Math.sin(this.direction) > 0)){
-                this.direction *= -1;
+            if (this.y < 0 && Math.sin(this.direction) < 0){
+                addCollisionSide('top');
+            }
+            else if ((this.y + size.height) > surfaceSize.height && Math.sin(this.direction) > 0){
+                addCollisionSide('bottom');
             }
 
             // Check for horizontal boundary collision and reflect angle
-            if ((this.x < 0 && Math.cos(this.direction) < 0) || ((this.x + size.width) > surfaceSize.width && Math.cos(this.direction) > 0)){
-                this.direction = Math.PI - this.direction;
+            if (this.x < 0 && Math.cos(this.direction) < 0){
+                addCollisionSide('left');
+            }
+            else if ((this.x + size.width) > surfaceSize.width && Math.cos(this.direction) > 0){
+                addCollisionSide('right');
             }
 
             // Normalize angle
             this.direction = (this.direction % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
 
-            if (originalDirection !== this.direction){
+            if (collisionSides.length > 0){
                 EvaluateLater({
                     componentId: this.componentId_,
                     contextElement: this,
-                    expression: this.oncollision,
+                    expression: this.oncustomcollision,
                     disableFunctionCall: false,
-                })(undefined, [], { target: null, direction: this.direction, oldDirection: originalDirection });
+                })(undefined, [], { target: null, direction: this.direction, oldDirection: originalDirection, sides: collisionSides });
 
                 EvaluateLater({
                     componentId: this.componentId_,
                     contextElement: this,
-                    expression: this.onphase,
+                    expression: this.oncustomphase,
                     disableFunctionCall: false,
-                })(undefined, [], { direction: this.direction, oldDirection: originalDirection });
+                })(undefined, [], { direction: this.direction, oldDirection: originalDirection, sides: collisionSides });
             }
         }
 

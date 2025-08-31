@@ -48,11 +48,11 @@ export declare class CanvasBodyElement extends CanvasParentElement {
     /**
      * An expression to execute when a collision occurs.
      */
-    oncollision: string;
+    oncustomcollision: string;
     /**
      * An expression to execute when the 'phase' property changes, typically used for boundary collisions.
      */
-    onphase: string;
+    oncustomphase: string;
     constructor();
     /**
      * Gets the radius of the body, assuming its child is a circular shape.
