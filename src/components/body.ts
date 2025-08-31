@@ -1,4 +1,4 @@
-import { EvaluateLater, GetGlobalScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { EvaluateLater, GetGlobalScope, IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasPosition, ICanvasCircle, ICanvasRect } from "../types";
 import { CanvasParentElement } from "./parent";
@@ -108,15 +108,16 @@ export class CanvasBodyElement extends CanvasParentElement{
         this.Step_();
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
-        scope.AddUninitCallback(() => {
-            const state = <ICanvasBodyState>GetGlobalScope(this.group ? `${this.group}.bodies` : 'bodies');
-            Array.isArray(state.bodies) && state.bodies.includes(this) && state.bodies.splice(state.bodies.indexOf(this), 1);
-            Array.isArray(state.moved) && state.moved.includes(this) && state.moved.splice(state.moved.indexOf(this), 1);
-        });
-        // Perform an initial collision check when the element is created
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPostfix_(params);
         this.DispatchEvent_();
+    }
+
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        const state = <ICanvasBodyState>GetGlobalScope(this.group ? `${this.group}.bodies` : 'bodies');
+        Array.isArray(state.bodies) && state.bodies.includes(this) && state.bodies.splice(state.bodies.indexOf(this), 1);
+        Array.isArray(state.moved) && state.moved.includes(this) && state.moved.splice(state.moved.indexOf(this), 1);
     }
     
     protected AttributeChanged_(name: string){

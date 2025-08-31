@@ -26,6 +26,7 @@ import { CanvasRotateCompact } from './components/rotate';
 import { CanvasScaleCompact } from './components/scale';
 import { CanvasAlignCompact } from './components/align';
 import { CanvasCenterCompact } from './components/center';
+import { CanvasRelativeCompact } from './components/relative';
 import { CanvasBodyCompact } from './components/body';
 import { CanvasInlineCompact } from './components/inline';
 
@@ -66,6 +67,7 @@ export function InlineJSCanvas(){
         CanvasAlignCompact();
         CanvasCenterCompact();
         CanvasBodyCompact();
+        CanvasRelativeCompact();
         CanvasInlineCompact();
     });
 }

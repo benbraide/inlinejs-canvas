@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams, JournalTry, ToString } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams, JournalTry, ToString } from "@benbraide/inlinejs";
 import { CustomElement, Property, RegisterCustomElement } from '@benbraide/inlinejs-element';
 import { ICanvasComponent, ICanvasFigure, ICanvasPosition, ICanvasShape, ICanvasSize, ICanvasSurface } from "../types";
 import { FilterByFunction } from "../utilities/filter";
@@ -108,14 +108,16 @@ export class CanvasSurfaceElement extends CustomElement implements ICanvasSurfac
         return (this.shadow_ ? this.shadow_.toDataURL(type) : '');
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined){
-        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
-        
-        scope.AddUninitCallback(() => (this.shadow_ = null));
-        scope.AddPostProcessCallback(() => {
-            this.InitializeShadow_();
-            this.Render();
-        });
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.shadow_ = null;
+        this.ctx_ = null;
+    }
+    
+    protected HandlePostProcess_(): void {
+        super.HandlePostProcess_();
+        this.InitializeShadow_();
+        this.Render();
     }
 
     protected InitializeShadow_(){

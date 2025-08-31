@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { ICanvasSize } from "../types";
 import { CanvasFullShapeElement } from "./full-shape";
 export declare class CanvasImageElement extends CanvasFullShapeElement {
@@ -11,7 +11,7 @@ export declare class CanvasImageElement extends CanvasFullShapeElement {
     UpdateWidthProperty(value: string): void;
     UpdateHeightProperty(value: string): void;
     constructor();
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
     protected AttributeChanged_(name: string): void;
     protected ShouldRefreshOnChange_(name: string): boolean;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;

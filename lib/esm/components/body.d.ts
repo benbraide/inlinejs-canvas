@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { ICanvasPosition, ICanvasCircle, ICanvasRect } from "../types";
 import { CanvasParentElement } from "./parent";
 /**
@@ -69,7 +69,8 @@ export declare class CanvasBodyElement extends CanvasParentElement {
      * Manually triggers a single movement step for the body.
      */
     Step(): void;
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
     protected AttributeChanged_(name: string): void;
     /**
      * Dispatches a collision check event. This is queued to the next microtask to

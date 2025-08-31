@@ -3,7 +3,7 @@ import { ICanvasPosition, ICanvasSize } from "../types";
 import { TestPoint } from "../utilities/test-point";
 import { CanvasFullShapeElement } from "./full-shape";
 import { AssignContextValue, GuardContext, TryGuardContext } from "../utilities/context";
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 
 export class CanvasTextElement extends CanvasFullShapeElement{
     protected observer_: globalThis.MutationObserver | null = null;
@@ -72,18 +72,19 @@ export class CanvasTextElement extends CanvasFullShapeElement{
         return TestPoint(point, this.GetOffsetPosition_(ctx), this.GetSize(ctx), this.GetTransformScale());
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined){
-        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
-        
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPostfix_(params);
+
         if (globalThis.MutationObserver){
             this.observer_ = new globalThis.MutationObserver(() => (!this.value.trim() && this.Refresh_()));
             this.observer_.observe(this, { childList: true, subtree: true, characterData: true });
         }
+    }
 
-        scope.AddUninitCallback(() => {
-            this.observer_?.disconnect();
-            this.observer_ = null;
-        });
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.observer_?.disconnect();
+        this.observer_ = null;
     }
     
     protected Render_(ctx: CanvasRenderingContext2D | Path2D){

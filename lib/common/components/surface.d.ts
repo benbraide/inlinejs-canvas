@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope } from "@benbraide/inlinejs";
 import { CustomElement } from '@benbraide/inlinejs-element';
 import { ICanvasComponent, ICanvasPosition, ICanvasSize, ICanvasSurface } from "../types";
 export declare class CanvasSurfaceElement extends CustomElement implements ICanvasSurface {
@@ -29,7 +29,8 @@ export declare class CanvasSurfaceElement extends CustomElement implements ICanv
     GetNative(): HTMLCanvasElement | null;
     GetBlob(type?: string): Promise<Blob | null> | null;
     GetDataUrl(type?: string): string;
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
+    protected HandlePostProcess_(): void;
     protected InitializeShadow_(): void;
     protected Render_(): void;
     protected RenderCallback_(): void;

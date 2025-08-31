@@ -5,7 +5,7 @@ export declare class CanvasInlineElement extends CanvasParentElement {
     effect: boolean;
     private effectCalled_;
     constructor();
-    protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void): void;
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
 }
 export declare function CanvasInlineCompact(): void;

@@ -1,6 +1,6 @@
 import { ICanvasPosition, ICanvasSize } from "../types";
 import { CanvasFullShapeElement } from "./full-shape";
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 export declare class CanvasTextElement extends CanvasFullShapeElement {
     protected observer_: globalThis.MutationObserver | null;
     protected font_: string;
@@ -18,7 +18,8 @@ export declare class CanvasTextElement extends CanvasFullShapeElement {
     constructor();
     GetSize(ctx: CanvasRenderingContext2D | null): ICanvasSize;
     ContainsPoint(point: ICanvasPosition, ctx: CanvasRenderingContext2D): boolean;
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined): void;
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void;
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void;
     protected Render_(ctx: CanvasRenderingContext2D | Path2D): void;
     protected AttributeChanged_(name: string): void;
     protected ShouldRefreshOnChange_(name: string): boolean;

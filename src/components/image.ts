@@ -1,4 +1,4 @@
-import { IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
+import { IElementScope, IElementScopeCreatedCallbackParams } from "@benbraide/inlinejs";
 import { Property, RegisterCustomElement } from "@benbraide/inlinejs-element";
 import { ICanvasSize } from "../types";
 import { CanvasFullShapeElement } from "./full-shape";
@@ -25,9 +25,9 @@ export class CanvasImageElement extends CanvasFullShapeElement{
         this.object_?.addEventListener('load', () => this.Refresh());
     }
 
-    protected HandleElementScopeCreated_({ scope, ...rest }: IElementScopeCreatedCallbackParams, postAttributesCallback?: (() => void) | undefined): void {
-        super.HandleElementScopeCreated_({ scope, ...rest }, postAttributesCallback);
-        scope.AddUninitCallback(() => (this.object_ = null));
+    protected HandleElementScopeDestroyed_(scope: IElementScope): void {
+        super.HandleElementScopeDestroyed_(scope);
+        this.object_ = null;
     }
 
     protected AttributeChanged_(name: string){

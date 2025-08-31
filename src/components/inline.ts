@@ -15,8 +15,9 @@ export class CanvasInlineElement extends CanvasParentElement{
         super();
     }
 
-    protected HandleElementScopeCreated_(params: IElementScopeCreatedCallbackParams, postAttributesCallback?: () => void){
-        super.HandleElementScopeCreated_(params, postAttributesCallback);
+    protected HandleElementScopeCreatedPostfix_(params: IElementScopeCreatedCallbackParams): void {
+        super.HandleElementScopeCreatedPostfix_(params);
+
         if (this.effect){
             UseEffect({
                 componentId: this.componentId_,
